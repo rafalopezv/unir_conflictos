@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1596167921817.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "6C2A975E",
+    "lastKnownWriteTime" : 1596053815,
+    "last_content_update" : 1596053815,
+    "path" : "~/Documents/unir_conflictos/style.css",
+    "project_path" : "style.css",
+    "properties" : {
+        "cursorPosition" : "5,18",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "css"
+}

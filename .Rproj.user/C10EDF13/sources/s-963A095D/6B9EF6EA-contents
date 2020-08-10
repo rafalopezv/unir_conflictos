@@ -1,0 +1,140 @@
+# sobre: acondicionamiento de base para limpieza
+library(tidyverse)
+library(magrittr)
+library(gganimate)
+
+df <- rio::import("input/base_limpia.xlsx")
+
+df %>% 
+  mutate(
+    año = lubridate::year(fecha)
+  ) %>% 
+  select(id, año, fecha) %>% 
+  mutate(num = rnorm(30738, mean = 100, sd = 17)) %>% 
+  filter(año > 2009)  -> temp
+
+# numero de conflictos en el tiempo
+centro_h <- median(temp$año)
+centro_v <- median(temp$n)
+
+temp$fecha %<>% as.Date()
+temp$fecha %>% class
+temp$fecha %>% unique
+temp$num %<>% as.numeric()
+temp$num %>% class
+
+temp %>% 
+  ggplot(aes(fecha, num)) +
+  geom_line(color = "#222438", alpha = 1) + 
+  #geom_point(size = 6, color = "#3D405B", alpha = 1) + 
+  # geom_text(aes(x = centro_h, y = centro_v, label = as.character(año)), 
+  #           size = 50, colour = "#CCF0F9", alpha = 0.7, inherit.aes = FALSE, 
+  #           family = "Roboto Black") +
+  #theme_void() +
+  transition_time(año) +
+  shadow_mark() 
+  ease_aes('linear')  
+
+
+temp %>% 
+  count(año)
+  ggplot(aes(fecha, num)) +
+  geom_line(color = "#222438", alpha = 1, group = 1)
+
+
+gapminder %>% 
+  ggplot(aes(gdpPercap, lifeExp, size = pop, colour = country)) +
+  geom_text(data=. %>%filter(country %in% lbl_countries[1]), 
+            aes(x=4000, y=65, label=as.character(floor(year))), 
+            size=35, colour="lightgrey", alpha=0.5, inherit.aes = FALSE) +
+  theme_ipsum_rc(grid_col = "grey90",axis_title_just = 'm')+
+  labs( x = 'GDP per capita', y = 'life expectancy') +
+  transition_time(year) +
+  ease_aes('linear') +
+  shadow_mark()
+
+devtools::install_github("thomasp85/transformr")
+
+
+
+
+
+
+library(gganimate)
+library(tidyverse)
+library(tibbletime)
+
+data("FB")
+
+
+FB %>% 
+  ggplot(aes(x = date, y = close)) +
+  geom_line() +
+  transition_time(date) +
+  shadow_mark()
+
+
+tibble(
+  año = seq(1950, 2020, 1),
+  valor = seq(1, 71, 1)
+) -> temp
+
+
+temp %>% 
+  ggplot(aes(año, valor)) +
+  geom_line(color = "#222438", alpha = 1, group = 1) + 
+  #geom_point(size = 6, color = "#3D405B", alpha = 1) + 
+  # geom_text(aes(x = centro_h, y = centro_v, label = as.character(año)), 
+  #           size = 50, colour = "#CCF0F9", alpha = 0.7, inherit.aes = FALSE, 
+  #           family = "Roboto Black") +
+  #theme_void() +
+  transition_time(valor) +
+  shadow_mark() +
+  ease_aes('linear') -> aa  
+
+temp$fecha %<>% as.Date()
+temp$fecha %>% class
+temp$fecha %>% unique
+temp$num %<>% as.numeric()
+temp$num %>% class
+
+
+temp %<>% 
+  count(año) %>% 
+  mutate(
+    dia = n/365,
+    dia = round(dia, 0)
+  )
+    
+
+centro_h <- median(temp$año)
+centro_v <- median(temp$dia)
+
+temp %>%   
+  ggplot(aes(round(año, 0), dia)) +
+  geom_line(color = "#222438", size = 4) + 
+  geom_point(color = "#E07A5F", size = 27) + 
+  geom_text(aes(x = centro_h, y = centro_v , label = as.character(año)),
+            size = 100, colour = "lightgray", alpha = 0.5, inherit.aes = F,
+            family = "Roboto Black") +
+  geom_text(aes(label = as.character(dia)), family = "Roboto Condensed Light", size = 20, color = "#222438") +
+  hrbrthemes::theme_ipsum_rc(grid = FALSE) +
+  geom_hline(yintercept = c(0, 14), color = "#870845", size = 1, alpha = 0.6) +
+  labs(
+    y = "", 
+    x = ""
+  ) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_text(family = "Roboto Black", size = 30, color = "#870845")
+  ) +
+  scale_y_continuous(breaks = c(0, 14)) +
+  transition_reveal(año) -> aa
+
+anim_save(animation = aa, filename = "img/animacion_dos_modelos.gif",
+          width  = 1000, height = 700,  fps = 30, duration = 20)  
+
+
+
+
+
