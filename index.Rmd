@@ -10,10 +10,11 @@ knitr::opts_chunk$set(echo = TRUE)
 source("codigo/graficos_generales.R")
 Sys.setlocale(locale = "es_ES.UTF-8")
 ```
-
 <center><b><h1>10 años de conflictividad en Bolivia</h1></b></center>
 <center><b><h2>2010-2020</h2></b></center>
-<center><img src="img/hand.svg" width="400" height="1200"></center>
+
+<center>Última actualización: `r format(Sys.time(), '%d %B, %Y, %X  %Z')`</center>
+<center><img src="img/hand.svg" width="300" height="800"></center>
 
 
 <center><h1>Conflictos sociales por día</h1></center>
@@ -37,6 +38,12 @@ cal_2019
 cal_2020
 ```
 <br>
+<center><h1>Conflictos por día (alternativa al anterior)</h1></center>
+<br>
+```{r, include=T, echo = F}
+años_juntos
+```
+
 <center><h1>Causas de los conflictos</h1></center>
 <center><h3>**12928** conflictos,  **17** razones</h3></center>
 <center><small>Las razones están ordendas de mayor a menor. Pase el mouse sobre el gráfico para mayores detalles. Desactive y active las categorías de la leyenda</small></center>

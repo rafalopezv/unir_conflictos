@@ -7,6 +7,7 @@ source("codigo/funciones.R")
 Sys.setlocale(locale = "es_ES.UTF-8")
 
 df <- rio::import("input/base_limpia.xlsx")
+
 colores <- c("#264653","#2a9d8f","#e9c46a","#f4a261","#e76f51", "#e63946", "#d90429", "#50514f", "#293241")
 colores_1 <- c("#222438","#262842","#3D405B","#CCF0F9","#870845", "#753855", "#E07A5F", "#F2CC8F", "#5BBF8F", "#BBEAD3")
 colores_2  <- c("#262842", "#5BBF8F", "#BBEAD3", "#870845", "#222438", "#E07A5F", "#3D405B", "#F2CC8F", "#CCF0F9", "#753855")
@@ -94,20 +95,76 @@ fin <- df %>% arrange(desc(fecha)) %>% slice(1) %>% pull(fecha) %>% as.Date()
 
 tibble(
   fecha = seq(as.Date("2010-01-01"), fin, 1),
-) -> temp 
+) -> temp_fechas 
 
-temp %>% 
+temp_fechas %>% 
   filter(!fecha %in% fechas$fecha) %>% 
   bind_rows(fechas, .) %>% 
   filter(fecha > "2009-12-31") %>% 
   mutate(
     año = lubridate::year(fecha),
     dia = lubridate::wday(fecha, label = TRUE),
-    dia_literal = lubridate::wday(fecha),
-    mes = lubridate::month(fecha, label = TRUE),
+    dia_literal = lubridate::wday(fecha, abbr = F),
+    mes = lubridate::month(fecha, label = TRUE, abbr = F),
     semana = lubridate::week(fecha)
   ) %>% 
-  mutate(n = replace_na(n, 0)) -> fechas
+  ungroup() %>% 
+  group_split(año, mes) %>% 
+  map(., ~arrange(., fecha)) %>% 
+  map(., ~mutate(., dia_mes = 1:nrow(.))) %>% 
+  bind_rows() %>% 
+  mutate(
+    n = replace_na(n, 0), 
+    eje_x = paste0(mes, " ", dia_mes),
+    etiqueta = paste0(dia_mes, " de ", mes, " de ", año)
+  ) -> fechas
+
+fechas %>% 
+  ungroup() %>% 
+  group_split(año) %>% 
+  map(., ~arrange(., fecha)) %>% 
+  map(., ~mutate(., num = 1:nrow(.))) %>% 
+  bind_rows() -> temp_fechas
+
+# eje x con 366 días (bisiesto)
+which(temp_fechas %>% 
+        group_split(año) %>% 
+        map(., "eje_x") %>% 
+        map(., length) %>% 
+        unlist() == 366) %>% 
+  first()
+
+eje_x <- temp_fechas %>% 
+  group_split(año) %>% 
+  map(., "eje_x")
+
+eje_x <- eje_x[[3]]
+eje_x <- eje_x[-365] 
+
+hchart(
+  temp_fechas, 
+  "heatmap", 
+  hcaes(
+    x = num,
+    y = año, 
+    value = n
+  )
+)  %>% 
+  hc_colorAxis(
+    stops = color_stops(4, c("#222438", "#E07A5F", "#F2CC8F", "#BBEAD3"))
+  ) %>% 
+  hc_yAxis(mayorGridLineWidth = 0, gridLineColor = "white") %>% 
+  hc_xAxis(minorGridLineWidth = 5, categories = eje_x, gridLineColor = "black", 
+           title = list(text = NULL), ceiling = 365) %>% 
+  hc_chart(backgroundColor="white", borderColor = "transparent", 
+           style=list(fontFamily = "Source Code Pro", fontSize = 12)) %>% 
+  hc_tooltip(enabled = T, valueDecimals = 2, borderWidth = 0.01, 
+             style = list(fontFamily = "IBM Plex Mono"),
+             pointFormat=paste("<b>{point.etiqueta}</b><br>
+                               <b>{point.n}</b> conflictos<br>"),
+             headerFormat = "") %>% 
+  hc_size(height = 800) -> años_juntos
+
 
 # graficar
 fechas %>% 
@@ -535,8 +592,19 @@ temp %>% merge(., ine, all.x = T) %>%
   filter(is.na(CODIGO)) %>% 
   unique %>% view()
 
+#-----------------------------------
+# duración conflictos
+#-----------------------------------
+df %>% group_by(id) %>% 
+  summarise(fecha_inicio = as.Date(min(fecha)),
+            fecha_final = as.Date(max(fecha)),
+            duracion_dias = as.numeric(difftime(fecha_final, fecha_inicio, units = "days"))) %>% 
+  mutate(
+    duracion_dias = case_when(
+      duracion_dias == 0 ~ 1,
+      T ~ duracion_dias
+    )
+  ) -> temp
 
 
 
-
-  

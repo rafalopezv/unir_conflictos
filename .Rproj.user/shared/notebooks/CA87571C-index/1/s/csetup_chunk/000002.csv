@@ -1,12 +1,61 @@
-"0","knitr::opts_chunk$set(echo = TRUE)"
-"0","source(""codigo/graficos_generales.R"")"
-"2","`group_by_()` is deprecated as of dplyr 0.7.0.
-Please use `group_by()` instead.
-See vignette('programming') for more help
-[90mThis warning is displayed once every 8 hours.[39m
-[90mCall `lifecycle::last_warnings()` to see where this warning was generated.[39m"
-"0","Sys.setlocale(locale = ""es_ES.UTF-8"")"
-"1","[1]"
-"1"," ""es_ES.UTF-8/es_ES.UTF-8/es_ES.UTF-8/C/es_ES.UTF-8/en_US.UTF-8"""
-"1","
+"0","source(""codigo/graficos_generales.R"")
+"
+"2","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"2","Scale for 'fill' is already present. Adding another scale for 'fill', which
+will replace the existing scale.
+"
+"2","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"2","Scale for 'fill' is already present. Adding another scale for 'fill', which
+will replace the existing scale.
+"
+"2","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"2","Scale for 'fill' is already present. Adding another scale for 'fill', which
+will replace the existing scale.
+"
+"2","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"2","Scale for 'fill' is already present. Adding another scale for 'fill', which
+will replace the existing scale.
+"
+"2","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"2","Scale for 'fill' is already present. Adding another scale for 'fill', which
+will replace the existing scale.
+"
+"2","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"2","Scale for 'fill' is already present. Adding another scale for 'fill', which
+will replace the existing scale.
+"
+"2","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"2","Scale for 'fill' is already present. Adding another scale for 'fill', which
+will replace the existing scale.
+"
+"2","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"2","Scale for 'fill' is already present. Adding another scale for 'fill', which
+will replace the existing scale.
+"
+"2","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"2","Scale for 'fill' is already present. Adding another scale for 'fill', which
+will replace the existing scale.
+"
+"2","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"2","Scale for 'fill' is already present. Adding another scale for 'fill', which
+will replace the existing scale.
+"
+"2","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"2","Scale for 'fill' is already present. Adding another scale for 'fill', which
+will replace the existing scale.
+"
+"2","`summarise()` ungrouping output (override with `.groups` argument)
+"
+"2","Error in median.default(., temp$duracion_dias) : need numeric data
 "
