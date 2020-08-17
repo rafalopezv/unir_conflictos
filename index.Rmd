@@ -55,21 +55,21 @@ razones_conflicto
 <br>
 <br>
 <center><h1>43 sectores movilizados en 10 años</h1></center>
-<center><small>Las áreas muestran la proporción los movilizados respecto al total</small></center>
+<center><small>Las áreas muestran la proporción los movilizados respecto al total. Los datos están en porcentaje. El total de conflictos asciende a 'xyz' </small></center>
+opción 1: haciendo clic se ingresa al detalle de cada sector
 <br>
 <br>
 ```{r, include=T, echo = F}
-quienes
+tree_map_1
 ```
-<br>
-<br>
-<center><h1>42 actores/instituciones demandadas en 10 años</h1></center>
-<center><small>Las áreas muestran la proporción los movilizados respecto al total</small></center>
+
+opción 2: todos los porcentajes están en un mkismo plano, no se ingresa haciendo clic
 <br>
 <br>
 ```{r, include=T, echo = F}
-a_quienes
+tree_map_2
 ```
+
 
 
 

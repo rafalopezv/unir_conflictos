@@ -567,30 +567,85 @@ hctreemap2(data = temp,
   hc_chart(backgroundColor="#FFFFFF", borderColor = "transparent", 
            style=list(fontFamily = "Source Code Pro", fontSize = 12))  -> a_quienes
 
-# mapa
-ine <- rio::import("input/codigos.ine.xlsx") 
-ine %<>% 
-  select(
-    departamento = DEPARTAMENTO, 
-    provincia = PROVINCIA,
-    localidad_o_municipio = MUNICIPIO, 
-    CODIGO
-  )
+
+#-----------------------------
+# treemap
+#-----------------------------
 
 df %>% 
-  mutate(año = year(fecha)) %>% 
-  group_by(año, departamento, provincia, localidad_o_municipio) %>% 
-  count() %>% 
-  filter(año > 2009) %>% 
+  count(sector_a, sub_sector_a) %>% 
   mutate(
-    departamento = toupper(departamento),
-    provincia = toupper(provincia),
-    localidad_o_municipio = toupper(localidad_o_municipio)
-  ) -> temp
+    porcentaje = prop.table(n)*100,
+    porcentaje = round(porcentaje, 3)
+  ) %>% 
+  mutate_if(is.character, replace_na, "Sin clasficación") %>% 
+  rename(value = n) %>% 
+  arrange(sector_a, desc(value))-> temp
 
-temp %>% merge(., ine, all.x = T) %>% 
-  filter(is.na(CODIGO)) %>% 
-  unique %>% view()
+colores <- temp %>% select(sector_a) %>% unique
+
+colores %<>% 
+  mutate(
+    color = c(rep(c("#E01F52", "#C6A659", "#06D6A0", "#466B77", "#073B4C", 
+                    "#D8B970", "#5FA1B7", "#118AB2", "#BAAB89", "#1E4D5C", 
+                    "#2C6E49", "#E07A5F", "#3D405B", "#81B29A", "#63585F", 
+                    "#B4B5BA", "#261F23", "#575D7C", "#9194C6", "#75184D"), 2), 
+              "#FCBF49", "#F77F00", "#1478AA")
+  )
+
+temp %<>% merge(., colores, alll.x = T)
+
+
+lvl_opts <-  list(
+  list(
+    level = 1,
+    borderWidth = 0,
+    borderColor = "transparent",
+    dataLabels = list(
+      enabled = TRUE,
+      align = "left",
+      verticalAlign = "top",
+      style = list(fontSize = "12px", textOutline = FALSE, color = "white")
+    )
+  ),
+  list(
+    level = 2,
+    borderWidth = 0,
+    borderColor = "transparent",
+    colorVariation = list(key = "brightness", to = 0.250),
+    dataLabels = list(enabled = FALSE),
+    style = list(fontSize = "8px", textOutline = FALSE, color = "white")
+  )
+)
+
+cols <- temp %>% pull(color) %>% unique
+
+hchart(
+  data_to_hierarchical(temp, c(sector_a, sub_sector_a), porcentaje, colors = cols),
+  type = "treemap",
+  levelIsConstant = T,
+  allowDrillToNode = T,
+  levels = lvl_opts,
+  tooltip = list(valueDecimals = FALSE)
+) %>% 
+  hc_chart(
+    style = list(fontFamily = "Source Code Pro")
+  ) %>% 
+  hc_size(height = 700)  -> tree_map_1
+
+
+hchart(
+  data_to_hierarchical(temp, c(sector_a, sub_sector_a), porcentaje, colors = cols),
+  type = "treemap",
+  #levelIsConstant = T,
+  #allowDrillToNode = T,
+  levels = lvl_opts,
+  tooltip = list(valueDecimals = FALSE)
+) %>% 
+  hc_chart(
+    style = list(fontFamily = "Source Code Pro")
+  ) %>% 
+  hc_size(height = 700)  -> tree_map_2
 
 #-----------------------------------
 # duración conflictos
