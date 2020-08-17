@@ -625,6 +625,9 @@ hchart(
   type = "treemap",
   levelIsConstant = T,
   allowDrillToNode = T,
+  drillUpButton = list(
+    text = "< Volver"
+  ),
   levels = lvl_opts,
   tooltip = list(valueDecimals = FALSE)
 ) %>% 
