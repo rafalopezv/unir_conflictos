@@ -174,4 +174,25 @@ calendario_heatmap <- function(dates, values, legendtitle = ""){
   return(g)
 }
 
+# tema mapa
+theme_map <- function(...) {
+  theme_minimal() +
+    theme(
+      text = element_text(family = "Source Code Pro"),
+      axis.line = element_blank(),
+      axis.text.x = element_blank(),
+      axis.text.y = element_blank(),
+      axis.ticks = element_blank(),
+      axis.title.x = element_blank(),
+      axis.title.y = element_blank(),
+      panel.grid.major = element_line(color = "white", size = 0.2),
+      panel.grid.minor = element_blank(),
+      plot.background = element_rect(fill = "white", color = NA), 
+      panel.background = element_rect(fill = "white", color = NA), 
+      panel.border = element_blank(),
+      strip.background = element_rect(fill = "white", colour = NA),
+      legend.position = "top",
+      legend.title = element_blank()
+    )
+}
 

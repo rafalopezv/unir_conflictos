@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 source("codigo/graficos_generales.R")
 Sys.setlocale(locale = "es_ES.UTF-8")
 ```
+
 <center><b><h1>10 años de conflictividad en Bolivia</h1></b></center>
 <center><b><h2>2010-2020</h2></b></center>
 
@@ -69,8 +70,30 @@ opción 2: todos los porcentajes están en un mkismo plano, no se ingresa hacien
 ```{r, include=T, echo = F}
 tree_map_2
 ```
+<br>
+<br>
+<center><h1>42 instituciones/sectores demandados</h1></center>
+opción 1: haciendo clic se ingresa al detalle de cada sector
+<br>
+<br>
+```{r, include=T, echo = F}
+tree_map_3
+```
 
-
+opción 2: todos los porcentajes están en un mkismo plano, no se ingresa haciendo clic
+<br>
+<br>
+```{r, include=T, echo = F}
+tree_map_4
+```
+<br>
+<br>
+<center><h1>¿Dónde ocurren los conflictos?</h1></center>
+<br>
+<center><h2>Sobre un totoal de 339 municipios</h2></center>
+```{r, include=T, echo = F, fig.width = 10, fig.height = 10}
+mapa_donde
+```
 
 
 

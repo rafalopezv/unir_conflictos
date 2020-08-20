@@ -650,19 +650,135 @@ hchart(
   ) %>% 
   hc_size(height = 700)  -> tree_map_2
 
-#-----------------------------------
-# duración conflictos
-#-----------------------------------
-df %>% group_by(id) %>% 
-  summarise(fecha_inicio = as.Date(min(fecha)),
-            fecha_final = as.Date(max(fecha)),
-            duracion_dias = as.numeric(difftime(fecha_final, fecha_inicio, units = "days"))) %>% 
+# treemap de quienes son los demandados
+df %>% 
+  count(sector_b, sub_sector_b) %>% 
   mutate(
-    duracion_dias = case_when(
-      duracion_dias == 0 ~ 1,
-      T ~ duracion_dias
+    porcentaje = prop.table(n)*100,
+    porcentaje = round(porcentaje, 3)
+  ) %>% 
+  mutate_if(is.character, replace_na, "Sin clasficación") %>% 
+  rename(value = n) %>% 
+  arrange(sector_b, desc(value))-> temp
+
+colores <- temp %>% select(sector_b) %>% unique
+
+colores %<>% 
+  mutate(
+    color = c(rep(c("#E01F52", "#C6A659", "#06D6A0", "#466B77", "#073B4C", 
+                    "#D8B970", "#5FA1B7", "#118AB2", "#BAAB89", "#1E4D5C", 
+                    "#2C6E49", "#E07A5F", "#3D405B", "#81B29A", "#63585F", 
+                    "#B4B5BA", "#575D7C", "#9194C6", "#75184D"), 2), 
+              "#FCBF49", "#F77F00", "#1478AA", "#4F000B")
+  )
+
+temp %<>% 
+  merge(., colores, alll.x = T) %>% 
+  mutate(porcentaje = round(porcentaje, 3))
+
+
+lvl_opts <-  list(
+  list(
+    level = 1,
+    borderWidth = 0,
+    borderColor = "transparent",
+    dataLabels = list(
+      enabled = TRUE,
+      align = "left",
+      verticalAlign = "top",
+      style = list(fontSize = "12px", textOutline = FALSE, color = "white")
     )
-  ) -> temp
+  ),
+  list(
+    level = 2,
+    borderWidth = 0,
+    borderColor = "transparent",
+    colorVariation = list(key = "brightness", to = 0.250),
+    dataLabels = list(enabled = FALSE),
+    style = list(fontSize = "8px", textOutline = FALSE, color = "white")
+  )
+)
+
+cols <- temp %>% pull(color) %>% unique
+
+hchart(
+  data_to_hierarchical(temp, c(sector_b, sub_sector_b), porcentaje, colors = cols),
+  type = "treemap",
+  levelIsConstant = T,
+  allowDrillToNode = T,
+  drillUpButton = list(
+    text = "< Volver"
+  ),
+  levels = lvl_opts,
+  tooltip = list(valueDecimals = FALSE)
+) %>% 
+  hc_chart(
+    style = list(fontFamily = "Source Code Pro")
+  ) %>% 
+  hc_size(height = 700)  -> tree_map_3
 
 
+hchart(
+  data_to_hierarchical(temp, c(sector_b, sub_sector_b), porcentaje, colors = cols),
+  type = "treemap",
+  levelIsConstant = T,
+  allowDrillToNode = F,
+  drillUpButton = list(
+    text = "< Volver"
+  ),
+  levels = lvl_opts,
+  tooltip = list(valueDecimals = FALSE)
+) %>% 
+  hc_chart(
+    style = list(fontFamily = "Source Code Pro")
+  ) %>% 
+  hc_size(height = 700)  -> tree_map_4
 
+
+#----------------------
+# donde conflictos
+#----------------------
+df %>% 
+  mutate(año = lubridate::year(fecha)) %>% 
+  group_by(año, departamento, localidad_o_municipio, codigo) %>% 
+  count() %>% 
+  filter(año > 2009) %>% 
+  ungroup() %>% 
+  group_split(año) %>% 
+  map(., ~mutate(., prop = prop.table(n)*100)) %>% 
+  bind_rows() %>% 
+  rename(CODIGO = codigo) %>%
+  filter(!is.na(CODIGO)) %>% 
+  group_split(año) -> temp
+
+mapa <- sf::st_read("input/municipios.339.geojson")
+mapas <- list()
+
+for(i in 1:length(temp)) {
+  merge(mapa, temp[[i]], all.x = T, by = "CODIGO") %>% 
+    mutate(
+      key = case_when(
+        is.na(n) ~ "Sin conflicto", 
+        T ~ "Al menos un conflicto"
+      ), 
+      key_1 = case_when(
+        key == "Sin conflicto" ~ 0,
+        T ~ 1
+      )
+    ) %>% 
+    fill(año) -> mapas[[i]]
+  
+}
+
+mapas %<>% 
+  bind_rows(.) %>% 
+  group_by(año) %>% 
+  mutate(key_2 = sum(key_1)) %>% 
+  mutate(etiqueta = paste0(año, "\n", key_2, " municipios con conflictos"))
+
+ggplot(mapas) +
+  geom_sf(aes(fill = key), color = "white", size = 0.009) + 
+  scale_fill_manual(values = rev(c("#222438", "#E07A5F"))) +
+  ggthemes::theme_map(base_family = "Source Code Pro") + 
+  facet_wrap(~etiqueta) + 
+  theme_map() -> mapa_donde
