@@ -782,3 +782,108 @@ ggplot(mapas) +
   ggthemes::theme_map(base_family = "Source Code Pro") + 
   facet_wrap(~etiqueta) + 
   theme_map() -> mapa_donde
+
+df1 <- df %>% 
+  mutate(year = lubridate::year(fecha))
+df1 <-  merge((df1 %>% filter(year >= 2010) %>% select(id, sector_a) %>% distinct()),
+              (df1 %>% filter(year >= 2010) %>% select(id, sector_b) %>% distinct())) %>% 
+  group_by(sector_a, sector_b) %>% 
+  summarise(cantidad = n()) %>% 
+  ungroup() %>% 
+  mutate(porcentaje = prop.table(cantidad)*100) %>% 
+  arrange(desc(cantidad)) %>% select(from = sector_a, to = sector_b, weight = cantidad)
+dependency <- highchart() %>%
+  hc_chart(
+    type = "dependencywheel",
+    polar = FALSE,
+    inverted = FALSE
+  ) %>% 
+  hc_xAxis(
+    categories = df1$from
+  ) %>% 
+  hc_yAxis(
+    visible = TRUE
+  ) %>% 
+  hc_colors(c(rep(c("#E01F52", "#C6A659", "#06D6A0", "#466B77", "#073B4C", 
+                    "#D8B970", "#5FA1B7", "#118AB2", "#BAAB89", "#1E4D5C", 
+                    "#2C6E49", "#E07A5F", "#3D405B", "#81B29A", "#63585F", 
+                    "#B4B5BA", "#261F23", "#575D7C", "#9194C6", "#75184D"), 2), 
+              "#FCBF49", "#F77F00", "#1478AA")) %>% 
+  hc_add_series(
+    df1,
+    name = "",
+    showInLegend = FALSE
+  ) %>% 
+  hc_tooltip(
+    outside = TRUE,
+    style = list(fontFamily = "Source Code Pro", fontSize = 15),
+    borderWidth = 0.8
+  )
+
+mapa <- jsonlite::fromJSON("input/municipios.339.geojson", simplifyVector = F)
+coord_mun <- sf::st_read("input/municipios.339.geojson")
+
+temp <- df %>% mutate(year = lubridate::year(fecha)) %>% filter(!is.na(codigo), year >= 2010) %>% 
+  select(id, codigo, year) %>% distinct() %>% 
+  group_by(codigo) %>% 
+  mutate(cantidad = n()) %>% 
+  ungroup() %>% 
+  group_by(codigo, year, cantidad) %>% 
+  summarise(anual = n()) %>% select(codigo, year, anual, cantidad) %>% 
+  mutate(year = paste0("a_",year)) %>% 
+  spread(year, anual)  
+
+
+
+temp <- left_join((coord_mun %>% select(municipio = MUNICIPIO, codigo = CODIGO) %>% filter(!is.na(codigo))),
+                  temp,
+                  by = "codigo") #%>% filter(!is.na(localidad_o_municipio))
+
+temp[is.na(temp)] <- 0
+
+temp <- temp %>% mutate(colores = case_when(cantidad <= as.numeric(quantile(unique(temp$cantidad)))[2] &
+                                              cantidad > 0 ~ "#3BC0ED",
+                                            cantidad > as.numeric(quantile(unique(temp$cantidad)))[2] & 
+                                              cantidad <= as.numeric(quantile(unique(temp$cantidad)))[3] ~ "#07F9B8",
+                                            cantidad > as.numeric(quantile(unique(temp$cantidad)))[3] & 
+                                              cantidad <= as.numeric(quantile(unique(temp$cantidad)))[4] ~ "#C6A659",
+                                            cantidad > as.numeric(quantile(unique(temp$cantidad)))[4] ~ "#E01F52",
+                                            cantidad == 0 ~ "#FFFFFF",
+                                            T ~ "NA"))
+
+
+datos <- temp %>% rename(CODIGO = codigo) %>% select(-municipio)
+datos$geometry <- NULL
+
+colores <- c("#CCDCE1", "#3BC0ED", "#07F9B8", "#C6A659", "#E01F52")
+secuencia <- as.numeric(quantile(unique(datos$cantidad)))
+secuencia[1] <- 1
+secuencia <- c(0,secuencia)
+
+datos <- datos %>% rename(value = cantidad)
+
+
+hcmap <- highchart(type = "map") %>%
+  hc_add_series(mapData = mapa, showInLegend = F, data = datos, 
+                value = "value", joinBy = "CODIGO",
+                borderColor = "transparent") %>% 
+  hc_colorAxis(dataClasses = color_classes(secuencia, colores)) %>% 
+  hc_tooltip(enabled = T, valueDecimals = 0, borderWidth = 0.01,
+             pointFormat=paste("<br>Municipio: <b>{point.name}</b><br>
+                               Conflictos: <b>{point.value}</b><br>
+                               2010: <b>{point.a_2010}</b><br>
+                               2011: <b>{point.a_2011}</b><br>
+                               2012: <b>{point.a_2012}</b><br>
+                               2013: <b>{point.a_2013}</b><br>
+                               2014: <b>{point.a_2014}</b><br>
+                               2015: <b>{point.a_2015}</b><br>
+                               2016: <b>{point.a_2016}</b><br>
+                               2017: <b>{point.a_2017}</b><br>
+                               2018: <b>{point.a_2018}</b><br>
+                               2019: <b>{point.a_2019}</b><br>
+                               2020: <b>{point.a_2020}</b>"),
+             headerFormat = "",
+             fontFamily = "Source Code Pro",
+             borderWidth = 0.8)
+
+hcmap <- hc_size(hcmap, 800, 800)
