@@ -783,6 +783,12 @@ ggplot(mapas) +
   facet_wrap(~etiqueta) + 
   theme_map() -> mapa_donde
 
+
+
+#-----
+#Dependency wheel demandante vs demandado
+#--------
+
 df1 <- df %>% 
   mutate(year = lubridate::year(fecha))
 df1 <-  merge((df1 %>% filter(year >= 2010) %>% select(id, sector_a) %>% distinct()),
@@ -792,6 +798,8 @@ df1 <-  merge((df1 %>% filter(year >= 2010) %>% select(id, sector_a) %>% distinc
   ungroup() %>% 
   mutate(porcentaje = prop.table(cantidad)*100) %>% 
   arrange(desc(cantidad)) %>% select(from = sector_a, to = sector_b, weight = cantidad)
+
+
 dependency <- highchart() %>%
   hc_chart(
     type = "dependencywheel",
@@ -820,6 +828,12 @@ dependency <- highchart() %>%
     borderWidth = 0.8
   )
 
+
+
+#-------
+## Mapa Highcharter
+#--------
+
 mapa <- jsonlite::fromJSON("input/municipios.339.geojson", simplifyVector = F)
 coord_mun <- sf::st_read("input/municipios.339.geojson")
 
@@ -834,22 +848,14 @@ temp <- df %>% mutate(year = lubridate::year(fecha)) %>% filter(!is.na(codigo), 
   spread(year, anual)  
 
 
-
-temp <- left_join((coord_mun %>% select(municipio = MUNICIPIO, codigo = CODIGO) %>% filter(!is.na(codigo))),
+temp <- left_join((coord_mun %>% 
+                     mutate(municipio = MUNICIPIO) %>% 
+                     select(municipio, codigo = CODIGO) %>% filter(!is.na(codigo))),
                   temp,
-                  by = "codigo") #%>% filter(!is.na(localidad_o_municipio))
+                  by = "codigo") 
+
 
 temp[is.na(temp)] <- 0
-
-temp <- temp %>% mutate(colores = case_when(cantidad <= as.numeric(quantile(unique(temp$cantidad)))[2] &
-                                              cantidad > 0 ~ "#3BC0ED",
-                                            cantidad > as.numeric(quantile(unique(temp$cantidad)))[2] & 
-                                              cantidad <= as.numeric(quantile(unique(temp$cantidad)))[3] ~ "#07F9B8",
-                                            cantidad > as.numeric(quantile(unique(temp$cantidad)))[3] & 
-                                              cantidad <= as.numeric(quantile(unique(temp$cantidad)))[4] ~ "#C6A659",
-                                            cantidad > as.numeric(quantile(unique(temp$cantidad)))[4] ~ "#E01F52",
-                                            cantidad == 0 ~ "#FFFFFF",
-                                            T ~ "NA"))
 
 
 datos <- temp %>% rename(CODIGO = codigo) %>% select(-municipio)
@@ -887,3 +893,394 @@ hcmap <- highchart(type = "map") %>%
              borderWidth = 0.8)
 
 hcmap <- hc_size(hcmap, 800, 800)
+
+
+
+#------
+# Barras año vs nivel
+#------
+
+conflictos <- df %>% 
+  mutate(year = lubridate::year(fecha))
+
+temp <- conflictos %>% filter(nivel > 0, year >= 2010) %>% select(id, nivel, year) %>% distinct() %>% 
+  group_by(year, nivel) %>% 
+  summarise(cantidad = n()) %>% 
+  group_by(year) %>% 
+  mutate(total = sum(cantidad)) %>%
+  ungroup() %>%
+  mutate(nivel = paste0("Nivel: ",nivel)) %>% 
+  spread(nivel, cantidad)
+
+
+temp[is.na(temp)] <- 0
+
+a_1 <- as.data.frame(temp) #%>% rename(Año = year)
+
+
+
+categories_column <- "year"
+measure_columns <- c(colnames(a_1[3:length(a_1)]))
+
+
+hbr_yn <- highchart() %>%
+  hc_xAxis(categories = a_1[, categories_column],
+           title = categories_column)
+
+
+invisible(lapply(measure_columns, function(column) {
+  hbr_yn <<-
+    hc_add_series(hc = hbr_yn, name = column,
+                  data = a_1[, column])
+}))
+
+
+
+hbr_gestion_nivel <- hbr_yn %>%
+  hc_chart(type = "column") %>%
+  hc_plotOptions(series = list(stacking = "normal")) %>%
+  hc_legend(reversed = TRUE) %>% 
+  hc_colors(c("#06D6A0", 
+              "#C6A659",
+              "#82769D",
+              "#E01F52",
+              "#073B4C"
+  )) %>%
+  hc_tooltip(enabled = T, valueDecimals = 0, borderWidth = 0.01,
+             crosshairs = TRUE, shared = TRUE,
+             style = list(fontFamily = "Barlow Semi Condensed",
+                          color = "black", fontSize = 14),
+             headerFormat = "<br><b>{point.key}</b><br><br>Total: <b>{point.total}</b><br>") %>%
+  hc_add_theme(hc_theme_smpl(
+    yAxis = list(
+      labels = list(style = list(fontSize = "15px"), useHTML = TRUE)
+    ),
+    xAxis = list(
+      labels = list(style = list(fontSize = "15px"), useHTML = TRUE)
+    )
+  )) %>%
+  hc_chart(backgroundColor="#FFFFFF", style = list(fontFamily = "Barlow Semi Condensed",
+                                                   color = "black")) %>% 
+  hc_title(text = "Conflictos anuales por nivel")
+
+
+
+
+#------
+# Barras sector vs nivel
+#------
+
+conflictos <- df %>% 
+  mutate(year = lubridate::year(fecha))
+
+temp <- merge((conflictos %>% select(id, sector_a) %>% distinct()),
+              (conflictos %>% filter(nivel > 0) %>% select(id, nivel) %>% distinct())) %>% 
+  group_by(sector_a, nivel) %>% 
+  summarise(cantidad = n()) %>% 
+  ungroup() %>% 
+  mutate(porcentaje = prop.table(cantidad)*100) %>% 
+  arrange(desc(cantidad)) %>% 
+  group_by(sector_a) %>% 
+  mutate(total = sum(cantidad)) %>% select(-porcentaje) %>% 
+  ungroup() %>%
+  mutate(nivel = paste0("Nivel: ",nivel)) %>% 
+  spread(nivel, cantidad) %>% 
+  arrange(desc(total))
+
+
+
+temp[is.na(temp)] <- 0
+
+a_1 <- as.data.frame(temp) %>% rename(Demandante = sector_a)
+
+
+
+categories_column <- "Demandante"
+measure_columns <- c(colnames(a_1[3:length(a_1)]))
+
+
+hbr_sn <- highchart() %>%
+  hc_xAxis(categories = a_1[, categories_column],
+           title = categories_column)
+
+
+invisible(lapply(measure_columns, function(column) {
+  hbr_sn <<-
+    hc_add_series(hc = hbr_sn, name = column,
+                  data = a_1[, column])
+}))
+
+
+
+hbr_sector_nivel <- hbr_sn %>%
+  hc_chart(type = "bar") %>%
+  hc_plotOptions(series = list(stacking = "normal")) %>%
+  hc_legend(reversed = TRUE) %>% 
+  hc_colors(c("#06D6A0", 
+              "#C6A659",
+              "#82769D",
+              "#E01F52",
+              "#073B4C"
+  )) %>%
+  hc_tooltip(enabled = T, valueDecimals = 0, borderWidth = 0.01,
+             crosshairs = TRUE, shared = TRUE,
+             style = list(fontFamily = "Barlow Semi Condensed",
+                          color = "black", fontSize = 14),
+             headerFormat = "<br><b>{point.key}</b><br>
+                              <br>Total: <b>{point.total}</b><br>") %>%
+  hc_add_theme(hc_theme_smpl(
+    yAxis = list(
+      labels = list(style = list(fontSize = "15px"), useHTML = TRUE)
+    ),
+    xAxis = list(
+      labels = list(style = list(fontSize = "15px"), useHTML = TRUE)
+    )
+  )) %>%
+  hc_chart(backgroundColor="#FFFFFF", style = list(fontFamily = "Barlow Semi Condensed",
+                                                   color = "black")) %>% 
+  hc_title(text = "Nivel de conflicto en sectores demandantes")
+
+
+
+
+#-----
+# Tortas ALCANCE 
+#------
+
+conflictos <- df %>% 
+  mutate(year = lubridate::year(fecha))
+
+df1 <- conflictos %>% filter(year >= 2010) %>%  select(id, alcance) %>% distinct() %>% 
+  group_by(alcance) %>% 
+  summarise(frecuencia = n()) %>% 
+  ungroup() %>% 
+  mutate(porcentaje = round(prop.table(frecuencia)*100,2)) %>% 
+  arrange(alcance)
+
+
+
+
+
+pie_alcance_total <- df1 %>%
+  hchart(
+    "pie", hcaes(x = alcance, y = frecuencia),
+    name = "Total Conflicots"
+  ) %>% 
+  hc_tooltip(
+    valueDecimals = 2, borderWidth = 0.8,
+    style = list(fontFamily = "Source Code Pro", fontSize = 15),
+    pointFormat=paste("<br>Alcance: <b>{point.alcance}</b><br>
+                      Cantidad: <b>{point.frecuencia}</b><br>
+                      2010: <b>{point.porcentaje} % </b>"),
+    headerFormat = "",
+    fontFamily = "Source Code Pro",
+    borderWidth = 0.8) %>% 
+  hc_colors(c("#E01F52", "#C6A659", "#06D6A0", "#466B77", "#073B4C", 
+              "#FCBF49", "#F77F00")) %>% 
+  hc_title(text = "Total Conflictos por Alcance") 
+
+# Facet pies
+
+df2 <- conflictos %>% filter(year >= 2010) %>%  select(id, alcance, year) %>% distinct() %>% 
+  group_by(alcance, year) %>% 
+  summarise(frecuencia = n()) %>% 
+  ungroup() %>% 
+  spread(year, frecuencia) %>% 
+  arrange(alcance)
+
+df2[is.na(df2)] <- 0
+
+create_hc <- function(t) {
+  
+  temp1 <- df2[c(1,t)]
+  
+  
+  nombre <- colnames(temp1)[2]
+  colnames(temp1)[2] <- "value"
+  
+  hc_pie <- temp1 %>%
+    hchart(
+      "pie", hcaes(x = alcance, y = value),
+      name = "Total Conflicots"
+    ) %>% 
+    hc_tooltip(
+      valueDecimals = 2, borderWidth = 0.8,
+      style = list(fontFamily = "Source Code Pro", fontSize = 15),
+      pointFormat=paste("<br>Alcance: <b>{point.alcance}</b><br>
+                      Cantidad: <b>{point.value}</b>"),
+      headerFormat = "",
+      fontFamily = "Source Code Pro",
+      borderWidth = 0.8) %>% 
+    hc_colors(c("#E01F52", "#C6A659", "#06D6A0", "#466B77", "#073B4C", 
+                "#FCBF49", "#F77F00")) %>% 
+    hc_title(text = paste0("Año ", nombre)) 
+  #              style = list(useHTML = TRUE, 
+  #                           fontSize = "18",
+  #                           fontFamily = "Source Code Pro"))
+  
+  
+  
+  hc_pie
+  
+}
+
+
+facet_alcance_pie <- c(2:12) %>%
+  map(create_hc)
+
+
+#-----
+# Torta AMBITO
+#------
+
+conflictos <- df %>% 
+  mutate(year = lubridate::year(fecha))
+
+df1 <- conflictos %>% filter(year >= 2010) %>%  select(id, ambito) %>% distinct() %>% 
+  group_by(ambito) %>% 
+  summarise(frecuencia = n()) %>% 
+  ungroup() %>% 
+  mutate(porcentaje = round(prop.table(frecuencia)*100,2)) %>% 
+  arrange(ambito)
+
+pie_ambito_total <- df1 %>%
+  hchart(
+    "pie", hcaes(x = ambito, y = frecuencia),
+    name = "Total Conflicots"
+  ) %>% 
+  hc_tooltip(
+    valueDecimals = 2, borderWidth = 0.8,
+    style = list(fontFamily = "Source Code Pro", fontSize = 15),
+    pointFormat=paste("<br>Ámbito: <b>{point.ambitoe}</b><br>
+                      Cantidad: <b>{point.frecuencia}</b><br>
+                      2010: <b>{point.porcentaje} % </b>"),
+    headerFormat = "",
+    fontFamily = "Source Code Pro",
+    borderWidth = 0.8) %>% 
+  hc_colors(c("#81B29A", "#63585F", 
+              "#B4B5BA", "#261F23", "#575D7C", "#9194C6", "#75184D"
+  )) %>% 
+  hc_title(text = "Total Conflictos por Ambito") 
+
+
+# Facet pies
+
+
+df2 <- conflictos %>% filter(year >= 2010) %>%  select(id, ambito, year) %>% distinct() %>% 
+  group_by(ambito, year) %>% 
+  summarise(frecuencia = n()) %>% 
+  ungroup() %>% 
+  spread(year, frecuencia) %>% 
+  arrange(ambito)
+
+df2[is.na(df2)] <- 0
+
+create_hc <- function(t) {
+  
+  temp1 <- df2[c(1,t)]
+  
+  
+  nombre <- colnames(temp1)[2]
+  colnames(temp1)[2] <- "value"
+  
+  hc_pie <- temp1 %>%
+    hchart(
+      "pie", hcaes(x = ambito, y = value),
+      name = "Total Conflicots"
+    ) %>% 
+    hc_tooltip(
+      valueDecimals = 2, borderWidth = 0.8,
+      style = list(fontFamily = "Source Code Pro", fontSize = 15),
+      pointFormat=paste("<br>Ámbito: <b>{point.ambito}</b><br>
+                      Cantidad: <b>{point.value}</b>"),
+      headerFormat = "",
+      fontFamily = "Source Code Pro",
+      borderWidth = 0.8) %>% 
+    hc_colors(c("#81B29A", "#63585F", 
+                "#B4B5BA", "#261F23", "#575D7C", "#9194C6", "#75184D")) %>% 
+    hc_title(text = paste0("Año ", nombre)) 
+  
+  
+  hc_pie
+  
+}
+
+
+facet_ambito_pie <- c(2:12) %>%
+  map(create_hc)
+
+
+
+#----------
+# Tree map demandante años
+#----------
+
+conflictos <- df %>% 
+  mutate(year = lubridate::year(fecha))
+
+conflictos %>% 
+  count(sector_a, year) %>% 
+  mutate(
+    porcentaje = prop.table(n)*100,
+    porcentaje = round(porcentaje, 3)
+  ) %>% 
+  mutate_if(is.character, replace_na, "Sin clasficación") %>% 
+  rename(value = n) %>% 
+  arrange(sector_a, desc(value))-> temp
+
+colores <- temp %>% select(sector_a) %>% unique
+
+colores %<>% 
+  mutate(
+    color = c(rep(c("#2C6E49", "#E07A5F", "#3D405B", "#81B29A", "#63585F",
+                    "#E01F52", "#C6A659", "#06D6A0", "#466B77", "#073B4C", 
+                    "#D8B970", "#5FA1B7", "#118AB2", "#BAAB89", "#1E4D5C", 
+                    "#B4B5BA", "#261F23", "#575D7C", "#9194C6", "#75184D"), 2), 
+              "#FCBF49", "#F77F00", "#1478AA")
+  )
+
+temp %<>% merge(., colores, alll.x = T)
+
+
+lvl_opts <-  list(
+  list(
+    level = 1,
+    borderWidth = 0,
+    borderColor = "transparent",
+    dataLabels = list(
+      enabled = TRUE,
+      align = "left",
+      verticalAlign = "top",
+      style = list(fontSize = "12px", textOutline = FALSE, color = "white")
+    )
+  ),
+  list(
+    level = 2,
+    borderWidth = 0,
+    borderColor = "transparent",
+    colorVariation = list(key = "brightness", to = 0.250),
+    dataLabels = list(enabled = FALSE),
+    style = list(fontSize = "8px", textOutline = FALSE, color = "white")
+  )
+)
+
+cols <- temp %>% pull(color) %>% unique
+
+hchart(
+  data_to_hierarchical(temp, c(sector_a, year), porcentaje, colors = cols),
+  type = "treemap",
+  levelIsConstant = T,
+  allowDrillToNode = T,
+  drillUpButton = list(
+    text = "< Volver"
+  ),
+  levels = lvl_opts,
+  tooltip = list(valueDecimals = FALSE)
+) %>% 
+  hc_chart(
+    style = list(fontFamily = "Source Code Pro")
+  ) %>% 
+  hc_size(height = 700)  -> tree_map_demandante_year
+
+
+
