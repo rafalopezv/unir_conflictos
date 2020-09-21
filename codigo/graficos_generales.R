@@ -601,7 +601,7 @@ invisible(lapply(measure_columns, function(column) {
 
 hbr_sector_nivel <- hbr_sn %>%
   hc_chart(type = "bar") %>%
-  hc_plotOptions(series = list(stacking = "percent")) %>%
+  hc_plotOptions(series = list(stacking = "normal")) %>%
   hc_legend(reversed = TRUE) %>% 
   hc_colors(c("#06D6A0", 
               "#C6A659",
