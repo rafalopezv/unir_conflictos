@@ -8,7 +8,7 @@ Sys.setlocale(locale = "es_ES.UTF-8")
 
 df <- rio::import("input/base_limpia.xlsx")
 
-colores <- c("#264653","#2a9d8f","#e9c46a","#f4a261","#e76f51", "#e63946", "#d90429", "#50514f", "#293241")
+colores <- c("#264653","#2a9d8f","#e9c46a","#f4a261","#e76f51", "#e63946","#d90429", "#50514f", "#293241")
 colores_1 <- c("#222438","#262842","#3D405B","#CCF0F9","#870845", "#753855", "#E07A5F", "#F2CC8F", "#5BBF8F", "#BBEAD3")
 colores_2  <- c("#262842", "#5BBF8F", "#BBEAD3", "#870845", "#222438", "#E07A5F", "#3D405B", "#F2CC8F", "#CCF0F9", "#753855")
 
@@ -18,27 +18,28 @@ df %>%
   unique() %>% 
   count(tipo) %>% 
   mutate(
+    x_100 = round(n/10, 0),
     prop = prop.table(n)*100,
     prop = round(prop, 2)
   ) %>% 
-  arrange(desc(n)) %>% 
+  arrange(desc(x_100)) %>% 
   hchart(
     "item", 
-    hcaes(name = tipo, y = n),
+    hcaes(name = tipo, y = x_100),
     marker = list(symbol = "square"),
     showInLegend = TRUE
   ) %>% 
-  hc_colors(colors = colores_2) %>% 
-  hc_chart(style = list(fontFamily = "IBM Plex Mono")) %>% 
+  hc_colors(colors = colores) %>% 
+  hc_chart(style = list(fontFamily = "Open Sans")) %>% 
   hc_tooltip(enabled = T, valueDecimals = 2, borderWidth = 0.01, 
-             style = list(fontFamily = "IBM Plex Mono"), backgroundColor =  "white",
+             style = list(fontFamily = "Open Sans"), backgroundColor =  "white",
              pointFormat=paste("<b>{point.tipo}</b><br>
                                <b>{point.n}</b> conflictos<br>
                                <b>{point.prop} %</b> sobre el total<br>"),
              headerFormat = "") %>% 
     hc_credits(
       enabled = TRUE,
-      text = "cada cuadrado representa a un conflicto"
+      text = "cada cuadrado representa a 10 conflictos"
     ) -> razones_conflicto
  
 # año conflicto
@@ -67,7 +68,7 @@ df %>%
     etiqueta = paste0("Año: ", año)
   ) %>% 
   ggplot(aes(as.character(num), dia)) + 
-  geom_text(aes(x = 1, y = 5.5, label = dia), family = "Source Code Pro Black",
+  geom_text(aes(x = 1, y = 5.5, label = dia), family = "Open Sans Bold",
             size = 17, color = "#222438") +
   facet_wrap(~etiqueta) + 
   theme(
@@ -77,7 +78,7 @@ df %>%
     axis.title.y = element_blank(),
     panel.background = element_rect(fill = "white", colour = NA),
     strip.background = element_rect(fill = "lightgray", colour = NA),
-    strip.text =  element_text(color = "#222438", family = "Source Code Pro Light", size = 18),
+    strip.text =  element_text(color = "#222438", family = "Open Sans Light", size = 18),
     axis.ticks = element_blank(),
     legend.position = "none",
     panel.grid.major = element_line(colour = "#3D405B", size = 0.09),
@@ -157,416 +158,13 @@ hchart(
   hc_xAxis(minorGridLineWidth = 5, categories = eje_x, gridLineColor = "black", 
            title = list(text = NULL), ceiling = 365) %>% 
   hc_chart(backgroundColor="white", borderColor = "transparent", 
-           style=list(fontFamily = "Source Code Pro", fontSize = 12)) %>% 
+           style=list(fontFamily = "Open Sans", fontSize = 12)) %>% 
   hc_tooltip(enabled = T, valueDecimals = 2, borderWidth = 0.01, 
-             style = list(fontFamily = "IBM Plex Mono"),
+            backgroundColor = "white",  style = list(fontFamily = "Open Sans"),
              pointFormat=paste("<b>{point.etiqueta}</b><br>
                                <b>{point.n}</b> conflictos<br>"),
              headerFormat = "") %>% 
   hc_size(height = 800) -> años_juntos
-
-
-# graficar
-fechas %>% 
-  filter(año == 2010) %>% 
-  mutate(valor = case_when(
-    n > 0 ~ "Día con conflicto",
-    T ~"Día sin conflicto"
-  )) -> temp
-
-temp %>% filter(valor == "Día sin conflicto") %>% nrow()
-
-a <- temp %>% pull(fecha)
-b <- temp %>% pull(valor)
-
-calendario_heatmap(a, b) + 
-  theme(
-    legend.position = "top",
-    legend.title = element_blank()
-  ) + 
-  scale_fill_manual(values = rev(c("#F2CC8F", "#3D405B"))) + 
-  labs(
-    subtitle = "2010: 43 días sin conflictos"
-  ) +
-  theme(
-    plot.subtitle =  element_text(vjust = -1, hjust = 0.5, size = 20),
-    strip.text =  element_blank(), 
-    axis.text.x = element_text(size = 19),
-    axis.text.y = element_text(size = 19),
-    legend.text = element_text(size = 20),
-    legend.position = c(0.5, 1.4)
-  ) -> cal_2010
-  
-
-fechas %>% 
-  filter(año == 2011) %>% 
-  mutate(valor = case_when(
-    n > 0 ~ "Día con conflicto",
-    T ~"Día sin conflicto"
-  )) -> temp
-
-c <- temp %>% filter(valor == "Día sin conflicto") %>% nrow()
-
-a <- temp %>% pull(fecha)
-b <- temp %>% pull(valor)
-
-calendario_heatmap(a, b) + 
-  theme(
-    legend.position = "top",
-    legend.title = element_blank()
-  ) + 
-  scale_fill_manual(values = rev(c("#F2CC8F", "#3D405B"))) + 
-  labs(
-    subtitle = paste0("2011: ", c, " días sin conflictos")
-  ) +
-  theme(
-    plot.subtitle =  element_text(vjust = -1, hjust = 0.5, size = 20),
-    strip.text =  element_blank(), 
-    axis.text.x = element_text(size = 19),
-    axis.text.y = element_text(size = 19),
-    legend.text = element_text(size = 20),
-    legend.position = "none"
-  ) -> cal_2011
-
-fechas %>% 
-  filter(año == 2012) %>% 
-  mutate(valor = case_when(
-    n > 0 ~ "Día con conflicto",
-    T ~"Día sin conflicto"
-  )) -> temp
-
-c <- temp %>% filter(valor == "Día sin conflicto") %>% nrow()
-
-a <- temp %>% pull(fecha)
-b <- temp %>% pull(valor)
-
-calendario_heatmap(a, b) + 
-  theme(
-    legend.position = "top",
-    legend.title = element_blank()
-  ) + 
-  scale_fill_manual(values = rev(c("#F2CC8F", "#3D405B"))) + 
-  labs(
-    subtitle = paste0("2012: ", c, " días sin conflictos")
-  ) +
-  theme(
-    plot.subtitle =  element_text(vjust = -1, hjust = 0.5, size = 20),
-    strip.text =  element_blank(), 
-    axis.text.x = element_text(size = 19),
-    axis.text.y = element_text(size = 19),
-    legend.text = element_text(size = 20),
-    legend.position = "none"
-  ) -> cal_2012
-
-
-fechas %>% 
-  filter(año == 2013) %>% 
-  mutate(valor = case_when(
-    n > 0 ~ "Día con conflicto",
-    T ~"Día sin conflicto"
-  )) -> temp
-
-c <- temp %>% filter(valor == "Día sin conflicto") %>% nrow()
-
-a <- temp %>% pull(fecha)
-b <- temp %>% pull(valor)
-
-calendario_heatmap(a, b) + 
-  theme(
-    legend.position = "top",
-    legend.title = element_blank()
-  ) + 
-  scale_fill_manual(values = rev(c("#F2CC8F", "#3D405B"))) + 
-  labs(
-    subtitle = paste0("2013: ", c, " días sin conflictos")
-  ) +
-  theme(
-    plot.subtitle =  element_text(vjust = -1, hjust = 0.5, size = 20),
-    strip.text =  element_blank(), 
-    axis.text.x = element_text(size = 19),
-    axis.text.y = element_text(size = 19),
-    legend.text = element_text(size = 20),
-    legend.position = "none"
-  ) -> cal_2013
-
-fechas %>% 
-  filter(año == 2014) %>% 
-  mutate(valor = case_when(
-    n > 0 ~ "Día con conflicto",
-    T ~"Día sin conflicto"
-  )) -> temp
-
-c <- temp %>% filter(valor == "Día sin conflicto") %>% nrow()
-
-a <- temp %>% pull(fecha)
-b <- temp %>% pull(valor)
-
-calendario_heatmap(a, b) + 
-  theme(
-    legend.position = "top",
-    legend.title = element_blank()
-  ) + 
-  scale_fill_manual(values = rev(c("#F2CC8F", "#3D405B"))) + 
-  labs(
-    subtitle = paste0("2014: ", c, " días sin conflictos")
-  ) +
-  theme(
-    plot.subtitle =  element_text(vjust = -1, hjust = 0.5, size = 20),
-    strip.text =  element_blank(), 
-    axis.text.x = element_text(size = 19),
-    axis.text.y = element_text(size = 19),
-    legend.text = element_text(size = 20),
-    legend.position = "none"
-  ) -> cal_2014
-
-
-fechas %>% 
-  filter(año == 2015) %>% 
-  mutate(valor = case_when(
-    n > 0 ~ "Día con conflicto",
-    T ~"Día sin conflicto"
-  )) -> temp
-
-c <- temp %>% filter(valor == "Día sin conflicto") %>% nrow()
-
-a <- temp %>% pull(fecha)
-b <- temp %>% pull(valor)
-
-calendario_heatmap(a, b) + 
-  theme(
-    legend.position = "top",
-    legend.title = element_blank()
-  ) + 
-  scale_fill_manual(values = rev(c("#F2CC8F", "#3D405B"))) + 
-  labs(
-    subtitle = paste0("2015: ", c, " días sin conflictos")
-  ) +
-  theme(
-    plot.subtitle =  element_text(vjust = -1, hjust = 0.5, size = 20),
-    strip.text =  element_blank(), 
-    axis.text.x = element_text(size = 19),
-    axis.text.y = element_text(size = 19),
-    legend.text = element_text(size = 20),
-    legend.position = "none"
-  ) -> cal_2015
-
-
-fechas %>% 
-  filter(año == 2016) %>% 
-  mutate(valor = case_when(
-    n > 0 ~ "Día con conflicto",
-    T ~"Día sin conflicto"
-  )) -> temp
-
-c <- temp %>% filter(valor == "Día sin conflicto") %>% nrow()
-
-a <- temp %>% pull(fecha)
-b <- temp %>% pull(valor)
-
-calendario_heatmap(a, b) + 
-  theme(
-    legend.position = "top",
-    legend.title = element_blank()
-  ) + 
-  scale_fill_manual(values = rev(c("#F2CC8F", "#3D405B"))) + 
-  labs(
-    subtitle = paste0("2016: ", c, " días sin conflictos")
-  ) +
-  theme(
-    plot.subtitle =  element_text(vjust = -1, hjust = 0.5, size = 20),
-    strip.text =  element_blank(), 
-    axis.text.x = element_text(size = 19),
-    axis.text.y = element_text(size = 19),
-    legend.text = element_text(size = 20),
-    legend.position = "none"
-  ) -> cal_2016
-
-
-fechas %>% 
-  filter(año == 2017) %>% 
-  mutate(valor = case_when(
-    n > 0 ~ "Día con conflicto",
-    T ~"Día sin conflicto"
-  )) -> temp
-
-c <- temp %>% filter(valor == "Día sin conflicto") %>% nrow()
-
-a <- temp %>% pull(fecha)
-b <- temp %>% pull(valor)
-
-calendario_heatmap(a, b) + 
-  theme(
-    legend.position = "top",
-    legend.title = element_blank()
-  ) + 
-  scale_fill_manual(values = rev(c("#F2CC8F", "#3D405B"))) + 
-  labs(
-    subtitle = paste0("2017: ", c, " días sin conflictos")
-  ) +
-  theme(
-    plot.subtitle =  element_text(vjust = -1, hjust = 0.5, size = 20),
-    strip.text =  element_blank(), 
-    axis.text.x = element_text(size = 19),
-    axis.text.y = element_text(size = 19),
-    legend.text = element_text(size = 20),
-    legend.position = "none"
-  ) -> cal_2017
-
-fechas %>% 
-  filter(año == 2018) %>% 
-  mutate(valor = case_when(
-    n > 0 ~ "Día con conflicto",
-    T ~"Día sin conflicto"
-  )) -> temp
-
-c <- temp %>% filter(valor == "Día sin conflicto") %>% nrow()
-
-a <- temp %>% pull(fecha)
-b <- temp %>% pull(valor)
-
-calendario_heatmap(a, b) + 
-  theme(
-    legend.position = "top",
-    legend.title = element_blank()
-  ) + 
-  scale_fill_manual(values = rev(c("#F2CC8F", "#3D405B"))) + 
-  labs(
-    subtitle = paste0("2018: ", c, " días sin conflictos")
-  ) +
-  theme(
-    plot.subtitle =  element_text(vjust = -1, hjust = 0.5, size = 20),
-    strip.text =  element_blank(), 
-    axis.text.x = element_text(size = 19),
-    axis.text.y = element_text(size = 19),
-    legend.text = element_text(size = 20),
-    legend.position = "none"
-  ) -> cal_2018
-
-
-fechas %>% 
-  filter(año == 2019) %>% 
-  mutate(valor = case_when(
-    n > 0 ~ "Día con conflicto",
-    T ~"Día sin conflicto"
-  )) -> temp
-
-c <- temp %>% filter(valor == "Día sin conflicto") %>% nrow()
-
-a <- temp %>% pull(fecha)
-b <- temp %>% pull(valor)
-
-calendario_heatmap(a, b) + 
-  theme(
-    legend.position = "top",
-    legend.title = element_blank()
-  ) + 
-  scale_fill_manual(values = rev(c("#F2CC8F", "#3D405B"))) + 
-  labs(
-    subtitle = paste0("2019: ", c, " días sin conflictos")
-  ) +
-  theme(
-    plot.subtitle =  element_text(vjust = -1, hjust = 0.5, size = 20),
-    strip.text =  element_blank(), 
-    axis.text.x = element_text(size = 19),
-    axis.text.y = element_text(size = 19),
-    legend.text = element_text(size = 20),
-    legend.position = "none",
-    plot.margin = margin(0, 0, 0, 0, "cm")
-  ) -> cal_2019
-
-fechas %>% 
-  filter(año == 2020) %>% 
-  mutate(valor = case_when(
-    n > 0 ~ "Día con conflicto",
-    T ~"Día sin conflicto"
-  )) -> temp
-
-c <- temp %>% filter(valor == "Día sin conflicto") %>% nrow()
-
-a <- temp %>% pull(fecha)
-b <- temp %>% pull(valor)
-
-calendario_heatmap(a, b) + 
-  theme(
-    legend.position = "top",
-    legend.title = element_blank()
-  ) + 
-  scale_fill_manual(values = rev(c("#F2CC8F", "#3D405B"))) + 
-  labs(
-    subtitle = paste0("2020: ", c, " días sin conflictos")
-  ) +
-  theme(
-    plot.subtitle =  element_text(vjust = -1, hjust = 0.5, size = 20),
-    strip.text =  element_blank(), 
-    axis.text.x = element_text(size = 19),
-    axis.text.y = element_text(size = 19),
-    legend.text = element_text(size = 20),
-    legend.position = "none",
-    plot.margin = margin(0, 0, 0, 0, "cm")
-  ) -> cal_2020
-
-# ¿quien se moviliza?
-df %>% 
-  count(sector_a) %>% 
-  mutate(
-    porcentaje = prop.table(n)*100,
-    porcentaje = round(porcentaje, 3)
-  ) %>% 
-  rename(value = n) -> temp
-
-hctreemap2(data = temp,
-           group_vars = "sector_a",
-           size_var = "value",
-           color_var = "porcentaje",
-           layoutAlgorithm = "squarified",
-           levelIsConstant = FALSE
-) %>% 
-  hc_colorAxis(stops = color_stops(colors = rev(c("#073B4C", "#E01F52")))) %>% 
-  hc_plotOptions(series = list(
-    dataLabels = list(
-      style = list(textOutline = FALSE,
-                   fontSize = 12)
-    )
-  )) %>%  
-  hc_legend(enabled = F)  %>% 
-  hc_colors("transparent")  %>% 
-  hc_tooltip(pointFormat = "<br>Número de conflictos: <b>{point.value}</b><br>
-                             Porcentaje: <b>{point.colorValue}%</b>", 
-             style = list(fontFamily = "Source Code Pro", fontSize = 12)) %>% 
-  hc_chart(backgroundColor="#FFFFFF", borderColor = "transparent", 
-           style=list(fontFamily = "Source Code Pro", fontSize = 12))  -> quienes
-
-# quienes son los más demandados
-df %>% 
-  count(sector_b) %>% 
-  mutate(
-    porcentaje = prop.table(n)*100,
-    porcentaje = round(porcentaje, 3)
-  ) %>% 
-  rename(value = n) -> temp
-
-hctreemap2(data = temp,
-           group_vars = "sector_b",
-           size_var = "value",
-           color_var = "porcentaje",
-           layoutAlgorithm = "squarified",
-           levelIsConstant = FALSE
-) %>% 
-  hc_colorAxis(stops = color_stops(colors = rev(c("#073B4C", "#D8B970")))) %>% 
-  hc_plotOptions(series = list(
-    dataLabels = list(
-      style = list(textOutline = FALSE,
-                   fontSize = 12)
-    )
-  )) %>%  
-  hc_legend(enabled = F)  %>% 
-  hc_colors("transparent")  %>% 
-  hc_tooltip(pointFormat = "<br>Número de conflictos: <b>{point.value}</b><br>
-                             Porcentaje: <b>{point.colorValue}%</b>", 
-             style = list(fontFamily = "Source Code Pro", fontSize = 12)) %>% 
-  hc_chart(backgroundColor="#FFFFFF", borderColor = "transparent", 
-           style=list(fontFamily = "Source Code Pro", fontSize = 12))  -> a_quienes
-
 
 #-----------------------------
 # treemap
@@ -629,26 +227,15 @@ hchart(
     text = "< Volver"
   ),
   levels = lvl_opts,
-  tooltip = list(valueDecimals = FALSE)
+  tooltip = list(valueDecimals = FALSE) 
 ) %>% 
   hc_chart(
-    style = list(fontFamily = "Source Code Pro")
+    style = list(fontFamily = "Open Sans")
   ) %>% 
-  hc_size(height = 700)  -> tree_map_1
+  hc_size(height = 700) %>% 
+  hc_tooltip(backgroundColor =  "white", borderWidth =  0.001) -> tree_map_1
 
 
-hchart(
-  data_to_hierarchical(temp, c(sector_a, sub_sector_a), porcentaje, colors = cols),
-  type = "treemap",
-  #levelIsConstant = T,
-  #allowDrillToNode = T,
-  levels = lvl_opts,
-  tooltip = list(valueDecimals = FALSE)
-) %>% 
-  hc_chart(
-    style = list(fontFamily = "Source Code Pro")
-  ) %>% 
-  hc_size(height = 700)  -> tree_map_2
 
 # treemap de quienes son los demandados
 df %>% 
@@ -713,27 +300,10 @@ hchart(
   tooltip = list(valueDecimals = FALSE)
 ) %>% 
   hc_chart(
-    style = list(fontFamily = "Source Code Pro")
+    style = list(fontFamily = "Open Sans")
   ) %>% 
+  hc_tooltip(backgroundColor =  "white", borderWidth =  0.001) %>% 
   hc_size(height = 700)  -> tree_map_3
-
-
-hchart(
-  data_to_hierarchical(temp, c(sector_b, sub_sector_b), porcentaje, colors = cols),
-  type = "treemap",
-  levelIsConstant = T,
-  allowDrillToNode = F,
-  drillUpButton = list(
-    text = "< Volver"
-  ),
-  levels = lvl_opts,
-  tooltip = list(valueDecimals = FALSE)
-) %>% 
-  hc_chart(
-    style = list(fontFamily = "Source Code Pro")
-  ) %>% 
-  hc_size(height = 700)  -> tree_map_4
-
 
 #----------------------
 # donde conflictos
@@ -779,11 +349,9 @@ mapas %<>%
 ggplot(mapas) +
   geom_sf(aes(fill = key), color = "white", size = 0.009) + 
   scale_fill_manual(values = rev(c("#222438", "#E07A5F"))) +
-  ggthemes::theme_map(base_family = "Source Code Pro") + 
+  ggthemes::theme_map(base_family = "Open Sans") + 
   facet_wrap(~etiqueta) + 
   theme_map() -> mapa_donde
-
-
 
 #-----
 #Dependency wheel demandante vs demandado
@@ -804,7 +372,8 @@ dependency <- highchart() %>%
   hc_chart(
     type = "dependencywheel",
     polar = FALSE,
-    inverted = FALSE
+    inverted = FALSE, 
+    style = list(fontFamily = "Open Sans")
   ) %>% 
   hc_xAxis(
     categories = df1$from
@@ -824,8 +393,9 @@ dependency <- highchart() %>%
   ) %>% 
   hc_tooltip(
     outside = TRUE,
-    style = list(fontFamily = "Source Code Pro", fontSize = 15),
-    borderWidth = 0.8
+    style = list(fontFamily = "Open Sans", fontSize = 15),
+    borderWidth = 0.01,
+    backgroundColor =  "white"
   )
 
 
@@ -833,7 +403,6 @@ dependency <- highchart() %>%
 #-------
 ## Mapa Highcharter
 #--------
-
 mapa <- jsonlite::fromJSON("input/municipios.339.geojson", simplifyVector = F)
 coord_mun <- sf::st_read("input/municipios.339.geojson")
 
@@ -861,7 +430,7 @@ temp[is.na(temp)] <- 0
 datos <- temp %>% rename(CODIGO = codigo) %>% select(-municipio)
 datos$geometry <- NULL
 
-colores <- c("#CCDCE1", "#3BC0ED", "#07F9B8", "#C6A659", "#E01F52")
+colores <- c("#CCDCE1", "#3BC0ED", "#07F9B8", "#C6A659")
 secuencia <- as.numeric(quantile(unique(datos$cantidad)))
 secuencia[1] <- 1
 secuencia <- c(0,secuencia)
@@ -872,9 +441,11 @@ datos <- datos %>% rename(value = cantidad)
 hcmap <- highchart(type = "map") %>%
   hc_add_series(mapData = mapa, showInLegend = F, data = datos, 
                 value = "value", joinBy = "CODIGO",
-                borderColor = "transparent") %>% 
-  hc_colorAxis(dataClasses = color_classes(secuencia, colores)) %>% 
-  hc_tooltip(enabled = T, valueDecimals = 0, borderWidth = 0.01,
+                borderColor = "lightgray", borderWidth = 0.05) %>% 
+  hc_colorAxis(stops = color_stops(10, c("#222438", "#E07A5F", "#F2CC8F"))) %>%
+  
+  #hc_colorAxis(dataClasses = color_classes(secuencia, colores)) %>% 
+  hc_tooltip(enabled = T, valueDecimals = 0, borderWidth = 0.001, backgroundColor =  "white",
              pointFormat=paste("<br>Municipio: <b>{point.name}</b><br>
                                Conflictos: <b>{point.value}</b><br>
                                2010: <b>{point.a_2010}</b><br>
@@ -889,11 +460,13 @@ hcmap <- highchart(type = "map") %>%
                                2019: <b>{point.a_2019}</b><br>
                                2020: <b>{point.a_2020}</b>"),
              headerFormat = "",
-             fontFamily = "Source Code Pro",
-             borderWidth = 0.8)
+             fontFamily = "Open Sans",
+             borderWidth = 0.8) %>% 
+  hc_chart(style = list(fontFamily = "Open Sans"))
+  
+
 
 hcmap <- hc_size(hcmap, 800, 800)
-
 
 
 #------
@@ -947,8 +520,8 @@ hbr_gestion_nivel <- hbr_yn %>%
               "#073B4C"
   )) %>%
   hc_tooltip(enabled = T, valueDecimals = 0, borderWidth = 0.01,
-             crosshairs = TRUE, shared = TRUE,
-             style = list(fontFamily = "Barlow Semi Condensed",
+             crosshairs = TRUE, shared = TRUE, backgroundColor = "white",
+             style = list(fontFamily = "Open Sans",
                           color = "black", fontSize = 14),
              headerFormat = "<br><b>{point.key}</b><br><br>Total: <b>{point.total}</b><br>") %>%
   hc_add_theme(hc_theme_smpl(
@@ -959,9 +532,8 @@ hbr_gestion_nivel <- hbr_yn %>%
       labels = list(style = list(fontSize = "15px"), useHTML = TRUE)
     )
   )) %>%
-  hc_chart(backgroundColor="#FFFFFF", style = list(fontFamily = "Barlow Semi Condensed",
-                                                   color = "black")) %>% 
-  hc_title(text = "Conflictos anuales por nivel")
+  hc_chart(backgroundColor="#FFFFFF", style = list(fontFamily = "Open Sans",
+                                                   color = "black")) 
 
 
 
@@ -1014,7 +586,7 @@ invisible(lapply(measure_columns, function(column) {
 
 hbr_sector_nivel <- hbr_sn %>%
   hc_chart(type = "bar") %>%
-  hc_plotOptions(series = list(stacking = "normal")) %>%
+  hc_plotOptions(series = list(stacking = "percent")) %>%
   hc_legend(reversed = TRUE) %>% 
   hc_colors(c("#06D6A0", 
               "#C6A659",
@@ -1023,22 +595,13 @@ hbr_sector_nivel <- hbr_sn %>%
               "#073B4C"
   )) %>%
   hc_tooltip(enabled = T, valueDecimals = 0, borderWidth = 0.01,
-             crosshairs = TRUE, shared = TRUE,
-             style = list(fontFamily = "Barlow Semi Condensed",
+             crosshairs = TRUE, shared = TRUE, backgroundColor = "white",
+             style = list(fontFamily = "Open Sans",
                           color = "black", fontSize = 14),
              headerFormat = "<br><b>{point.key}</b><br>
                               <br>Total: <b>{point.total}</b><br>") %>%
-  hc_add_theme(hc_theme_smpl(
-    yAxis = list(
-      labels = list(style = list(fontSize = "15px"), useHTML = TRUE)
-    ),
-    xAxis = list(
-      labels = list(style = list(fontSize = "15px"), useHTML = TRUE)
-    )
-  )) %>%
-  hc_chart(backgroundColor="#FFFFFF", style = list(fontFamily = "Barlow Semi Condensed",
-                                                   color = "black")) %>% 
-  hc_title(text = "Nivel de conflicto en sectores demandantes")
+  hc_chart(backgroundColor="#FFFFFF", style = list(fontFamily = "Open Sans",
+                                                   color = "black"))
 
 
 
@@ -1067,17 +630,16 @@ pie_alcance_total <- df1 %>%
     name = "Total Conflicots"
   ) %>% 
   hc_tooltip(
-    valueDecimals = 2, borderWidth = 0.8,
-    style = list(fontFamily = "Source Code Pro", fontSize = 15),
+    valueDecimals = 2, borderWidth = 0.001,
+    style = list(fontFamily = "Open Sans", fontSize = 15),
     pointFormat=paste("<br>Alcance: <b>{point.alcance}</b><br>
                       Cantidad: <b>{point.frecuencia}</b><br>
-                      2010: <b>{point.porcentaje} % </b>"),
+                      Porcentaje: <b>{point.porcentaje} % </b>"),
     headerFormat = "",
-    fontFamily = "Source Code Pro",
-    borderWidth = 0.8) %>% 
+    fontFamily = "Open Sans",
+    backgroundColor = "white") %>% 
   hc_colors(c("#E01F52", "#C6A659", "#06D6A0", "#466B77", "#073B4C", 
-              "#FCBF49", "#F77F00")) %>% 
-  hc_title(text = "Total Conflictos por Alcance") 
+              "#FCBF49", "#F77F00")) 
 
 # Facet pies
 
@@ -1104,19 +666,18 @@ create_hc <- function(t) {
       name = "Total Conflicots"
     ) %>% 
     hc_tooltip(
-      valueDecimals = 2, borderWidth = 0.8,
-      style = list(fontFamily = "Source Code Pro", fontSize = 15),
+      valueDecimals = 2, borderWidth = 0.001, backgroundColor = "white",
+      style = list(fontFamily = "Open Sans", fontSize = 15),
       pointFormat=paste("<br>Alcance: <b>{point.alcance}</b><br>
                       Cantidad: <b>{point.value}</b>"),
-      headerFormat = "",
-      fontFamily = "Source Code Pro",
-      borderWidth = 0.8) %>% 
+      headerFormat = "") %>% 
     hc_colors(c("#E01F52", "#C6A659", "#06D6A0", "#466B77", "#073B4C", 
                 "#FCBF49", "#F77F00")) %>% 
-    hc_title(text = paste0("Año ", nombre)) 
+    hc_title(text = paste0("Año ", nombre)) %>% 
+    hc_chart(style = list(fontFamily = "Open Sans"))
   #              style = list(useHTML = TRUE, 
   #                           fontSize = "18",
-  #                           fontFamily = "Source Code Pro"))
+  #                           fontFamily = "Open Sans"))
   
   
   
@@ -1150,17 +711,17 @@ pie_ambito_total <- df1 %>%
   ) %>% 
   hc_tooltip(
     valueDecimals = 2, borderWidth = 0.8,
-    style = list(fontFamily = "Source Code Pro", fontSize = 15),
+    style = list(fontFamily = "Open Sans", fontSize = 15),
     pointFormat=paste("<br>Ámbito: <b>{point.ambitoe}</b><br>
                       Cantidad: <b>{point.frecuencia}</b><br>
-                      2010: <b>{point.porcentaje} % </b>"),
+                      Porcentaje: <b>{point.porcentaje} % </b>"),
     headerFormat = "",
-    fontFamily = "Source Code Pro",
+    fontFamily = "Open Sans",
     borderWidth = 0.8) %>% 
   hc_colors(c("#81B29A", "#63585F", 
               "#B4B5BA", "#261F23", "#575D7C", "#9194C6", "#75184D"
   )) %>% 
-  hc_title(text = "Total Conflictos por Ambito") 
+  hc_chart(style = list(fontFamily = "Open Sans"))
 
 
 # Facet pies
@@ -1189,16 +750,15 @@ create_hc <- function(t) {
       name = "Total Conflicots"
     ) %>% 
     hc_tooltip(
-      valueDecimals = 2, borderWidth = 0.8,
-      style = list(fontFamily = "Source Code Pro", fontSize = 15),
+      valueDecimals = 2, borderWidth = 0.01, backgroundColor = "white",
+      style = list(fontFamily = "Open Sans", fontSize = 15),
       pointFormat=paste("<br>Ámbito: <b>{point.ambito}</b><br>
                       Cantidad: <b>{point.value}</b>"),
-      headerFormat = "",
-      fontFamily = "Source Code Pro",
-      borderWidth = 0.8) %>% 
+      headerFormat = "") %>% 
     hc_colors(c("#81B29A", "#63585F", 
                 "#B4B5BA", "#261F23", "#575D7C", "#9194C6", "#75184D")) %>% 
-    hc_title(text = paste0("Año ", nombre)) 
+    hc_title(text = paste0("Año ", nombre)) %>% 
+    hc_chart(style = list(fontFamily = "Open Sans"))
   
   
   hc_pie
@@ -1278,7 +838,7 @@ hchart(
   tooltip = list(valueDecimals = FALSE)
 ) %>% 
   hc_chart(
-    style = list(fontFamily = "Source Code Pro")
+    style = list(fontFamily = "Open Sans")
   ) %>% 
   hc_size(height = 700)  -> tree_map_demandante_year
 

@@ -11,35 +11,23 @@ source("codigo/graficos_generales.R")
 Sys.setlocale(locale = "es_ES.UTF-8")
 ```
 
-<center><b><h1>10 años de conflictividad en Bolivia</h1></b></center>
+<center><b><h1>11 años de conflictividad en Bolivia</h1></b></center>
 <center><b><h2>2010-2020</h2></b></center>
 
-<center>Última actualización: `r format(Sys.time() - 360000, '%d %B, %Y, %X  %Z')`</center>
+<center>Última actualización: `r format(Sys.time(), '%d %B, %Y, %X  %Z')`</center>
 <center><img src="img/hand.svg" width="100" height="300"></center>
 
 
 <center><h1>Conflictos sociales por día</h1></center>
 <br>
+<small><center>Los siguientes calendarios muestran el promedio de conflictos sociales por día.</center></small>
 ```{r, include=T, echo = F, fig.align='center', fig.width=9, fig.height=6}
 calendario
 ```
 <br>
-<center><h1>Días sin y con conflicto</h1></center>
-```{r, include = T, echo = F, fig.width = 20, fig.align = 'center'}
-cal_2010
-cal_2011
-cal_2012
-cal_2013
-cal_2014
-cal_2015
-cal_2016
-cal_2017
-cal_2018
-cal_2019
-cal_2020
-```
+<center><h1>Intensidad de los conflictos por día</h1></center>
 <br>
-<center><h1>Conflictos por día (alternativa al anterior)</h1></center>
+<small><center>Este gráfico muestra más de 3800 días y la cantidad de conflictos en cada uno de ellos.El color representa la intensidad de los conflcitos en ese día: mientras más oscuro mayor número de conflcitos y mientras más claro menor frecuencia de conflictos. Pase el mouse sobre cualquier día para conocer mayores detalles</center></small>
 <br>
 ```{r, include=T, echo = F}
 años_juntos
@@ -56,64 +44,54 @@ razones_conflicto
 <br>
 <br>
 <center><h1>43 sectores movilizados en 10 años</h1></center>
-<center><small>Las áreas muestran la proporción los movilizados respecto al total. Los datos están en porcentaje. El total de conflictos asciende a 'xyz' </small></center>
-opción 1: haciendo clic se ingresa al detalle de cada sector
+<center><small>Las áreas muestran la proporción de los sectores movilizados respecto al total. Los datos están en porcentaje. En muchos casos los sectores tienen "subsectores". Para saber este nivel de detalle, haga click sobre el sector del cual desea tener mayor información</small></center>
 <br>
 <br>
 ```{r, include=T, echo = F}
 tree_map_1
 ```
 
-opción 2: todos los porcentajes están en un mkismo plano, no se ingresa haciendo clic
-<br>
-<br>
-```{r, include=T, echo = F}
-tree_map_2
-```
-<br>
-<br>
 <center><h1>42 instituciones/sectores demandados</h1></center>
-opción 1: haciendo clic se ingresa al detalle de cada sector
+<center><small>Las áreas muestran la proporción de los sectores demandados respecto al total. Los datos están en porcentaje. En miuchos casos los sectores tienen "subsectores". Para saber este nivel de detalle, haga click sobre el sector del cual desea tener mayor información</small></center>
 <br>
 <br>
 ```{r, include=T, echo = F}
 tree_map_3
 ```
 
-opción 2: todos los porcentajes están en un mkismo plano, no se ingresa haciendo clic
-<br>
-<br>
-```{r, include=T, echo = F}
-tree_map_4
-```
 <br>
 <br>
 <center><h1>¿Dónde ocurren los conflictos?</h1></center>
 <br>
-<center><h2>Sobre un totoal de 339 municipios</h2></center>
+<center><h2>Sobre un total de 339 municipios</h2></center>
+
+</small><center>Los mapas muestran donde **si** y donde **no** ocurren los conflcitos por año. En un siguiente mapa se puede observar la intensidad de los conflictos.</center></small>
 ```{r, include=T, echo = F, fig.width = 10, fig.height = 10}
 mapa_donde
 ```
 <br>
 <br>
-<center><h3>*12292* conflictos entre *43* sectores en 10 años </h3></center>
-<center><small> Cada color representa un sector y las curvas conectan sectores que tuvieron algún conflicto. El ancho de las conexiones muestra la cantidad de conflictos entre estos dos sectores. Pase el mouse sobre los sectores y sobre las conexiones para mayores detalles.  </small></center>
-<br>
-```{r, include=T, echo = F}
-dependency
-```
-<br>
-<center><h2>En 10 años se registraron conflictos en 268 municipios </h2></center>
-<center><small> Pase el mouse sobre los municipios para ver la cantidad y los años de los conflictos.  </small></center>
+<center><h2>En 10 años se registraron conflictos en 268 municipios (79% de los municipios) </h2></center>
+<center><small> Pase el mouse sobre los municipios para ver la cantidad deconflictos por año.</small></center>
 <br>
 <br>
 ```{r, include=T, echo = F}
 hcmap
 ```
+<br>
+<center><h3>¿Cuál es la relación entre el que demanda y el demandado?</h3></center>
+<br>
+<center><h3>**12292** conflictos entre **43** sectores en 11 años</h3></center>
+<center><small> Cada color representa un sector y las curvas conectan sectores que tuvieron algún conflicto, ess decir al demandado con el demandante. El ancho de las conexiones muestra la cantidad de conflictos entre estos dos sectores. Pase el mouse sobre los sectores y sobre las conexiones para mayores detalles.  </small></center>
+<br>
+```{r, include=T, echo = F}
+dependency
+```
+<br>
 
 <br>
 <br>
-<center><h2>En 10 años la cantidad de conflictos anuales fue variando </h2></center>
+<center><h2>En 11 años la cantidad de conflictos anuales fue variando </h2></center>
 <center><small> Pase el mouse sobre las barras anuales para ver que nivel de conflictos se generaron cada año</small></center>
 <center><small> Puede desactivar/activar cada uno de los años presionando el año en la leyenda</small></center>
 <br>
@@ -123,12 +101,11 @@ hcmap
 hbr_gestion_nivel
 ```
 
-
 <br>
 <br>
-<center><h2>En 10 años cada demandante tuvo diversos niveles de conflicto </h2></center>
-<center><small> Pase el mouse sobre los conflictos para ver la cantidad por nivel de cada demandante</small></center>
-<center><small> Puede activar/desactivar los niveles presionando estos en la leyenda</small></center>
+<center><h2>En 11 años cada demandante tuvo diversos niveles de conflicto </h2></center>
+<center><small> Pase el mouse sobre los conflictos para ver la cantidad por nivel de cada demandante. Este grráfico ha sido porcentualizado, por tanto, mientras más espacio ocupe algún color (Nivel de conflictividad) es mayor su ejercicio por ese demandante</small></center>
+<center><small> Puede activar/desactivar los niveles presionando éstos en la leyenda</small></center>
 <br>
 <br>
 
@@ -136,12 +113,10 @@ hbr_gestion_nivel
 hbr_sector_nivel
 ```
 
-
-
 <br>
 <br>
-<center><h2>En 10 años los conflictos se distribuyen en 7 diferentes tipos de alcance</h2></center>
-<center><small> Pase el mouse sobre los alcances para ver la distribución de conflictos por cada alcance</small></center>
+<center><h2>Los conflictos varían en su ocupación del territorio.Algunos pueden ser locales o vecinales, mientras otros pueden alcanzar incluso ámbitos internacionales. En 11 años los conflictos se distribuyen en 7 diferentes tipos de alcance</h2></center>
+<center><small>Pase el mouse sobre los alcances para ver la distribución de conflictos por cada alcance</small></center>
 <br>
 <br>
 
@@ -155,7 +130,6 @@ pie_alcance_total
 <br>
 <br>
 
-
 ```{r, include=T, echo = F,  fig.align = "center"}
 facet_alcance_pie %>%
  map(hc_size, height = 300) %>%
@@ -163,8 +137,6 @@ facet_alcance_pie %>%
   map(tags$div, class = "col-sm-4") %>%
   tags$div(class = "row")
 ```
-
-
 
 <br>
 <br>
@@ -191,7 +163,6 @@ facet_ambito_pie %>%
   map(tags$div, class = "col-sm-4") %>%
   tags$div(class = "row")
 ```
-
 
 <br>
 <br>

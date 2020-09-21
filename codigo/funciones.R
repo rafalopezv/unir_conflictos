@@ -178,7 +178,7 @@ calendario_heatmap <- function(dates, values, legendtitle = ""){
 theme_map <- function(...) {
   theme_minimal() +
     theme(
-      text = element_text(family = "Source Code Pro"),
+      text = element_text(family = "Open Sans"),
       axis.line = element_blank(),
       axis.text.x = element_blank(),
       axis.text.y = element_blank(),
