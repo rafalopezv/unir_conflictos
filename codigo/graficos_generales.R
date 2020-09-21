@@ -472,7 +472,6 @@ hcmap <- hc_size(hcmap, 800, 800)
 #------
 # Barras año vs nivel
 #------
-
 conflictos <- df %>% 
   mutate(year = lubridate::year(fecha))
 
@@ -482,7 +481,15 @@ temp <- conflictos %>% filter(nivel > 0, year >= 2010) %>% select(id, nivel, yea
   group_by(year) %>% 
   mutate(total = sum(cantidad)) %>%
   ungroup() %>%
-  mutate(nivel = paste0("Nivel: ",nivel)) %>% 
+  mutate(
+    nivel = case_when(
+      nivel == 1 ~ "Latente",
+      nivel == 2 ~ "Manifiesto",
+      nivel == 3 ~ "Confrontación",
+      nivel == 4 ~ "Enfrentamiento violento",
+      nivel == 5 ~ "Crisis de gobernabilidad",
+    )
+  ) %>% 
   spread(nivel, cantidad)
 
 
@@ -555,7 +562,15 @@ temp <- merge((conflictos %>% select(id, sector_a) %>% distinct()),
   group_by(sector_a) %>% 
   mutate(total = sum(cantidad)) %>% select(-porcentaje) %>% 
   ungroup() %>%
-  mutate(nivel = paste0("Nivel: ",nivel)) %>% 
+  mutate(
+    nivel = case_when(
+      nivel == 1 ~ "Latente",
+      nivel == 2 ~ "Manifiesto",
+      nivel == 3 ~ "Confrontación",
+      nivel == 4 ~ "Enfrentamiento violento",
+      nivel == 5 ~ "Crisis de gobernabilidad",
+    )
+  ) %>% 
   spread(nivel, cantidad) %>% 
   arrange(desc(total))
 
