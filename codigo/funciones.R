@@ -196,5 +196,14 @@ theme_map <- function(...) {
     )
 }
 
+# cambio: coma por punto en decimales
+
+#----------------------
+# cambio de lenguage en fechas
+lang <- getOption("highcharter.lang")
+lang$decimalPoint <- ","
+
+options(highcharter.lang = lang)
+
 
 

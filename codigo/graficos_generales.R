@@ -30,16 +30,17 @@ df %>%
     showInLegend = TRUE
   ) %>% 
   hc_colors(colors = colores) %>% 
-  hc_chart(style = list(fontFamily = "Open Sans")) %>% 
+  hc_chart(style = list(fontFamily = "Oswald")) %>% 
   hc_tooltip(enabled = T, valueDecimals = 2, borderWidth = 0.01, 
-             style = list(fontFamily = "Open Sans"), backgroundColor =  "white",
+             style = list(fontFamily = "Oswald"), backgroundColor =  "white",
              pointFormat=paste("<b>{point.tipo}</b><br>
                                <b>{point.n}</b> conflictos<br>
                                <b>{point.prop} %</b> sobre el total<br>"),
              headerFormat = "") %>% 
     hc_credits(
       enabled = TRUE,
-      text = "cada cuadrado representa a 10 conflictos"
+      text = "cada cuadrado representa a 10 conflictos", 
+      style = list(fontFamily = "Oswald", fontSize = 13)
     ) -> razones_conflicto
  
 # año conflicto
@@ -68,7 +69,7 @@ df %>%
     etiqueta = paste0("Año: ", año)
   ) %>% 
   ggplot(aes(as.character(num), dia)) + 
-  geom_text(aes(x = 1, y = 5.5, label = dia), family = "Open Sans Bold",
+  geom_text(aes(x = 1, y = 5.5, label = dia), family = "Open Sans ExtraBold",
             size = 17, color = "#222438") +
   facet_wrap(~etiqueta) + 
   theme(
@@ -78,7 +79,7 @@ df %>%
     axis.title.y = element_blank(),
     panel.background = element_rect(fill = "white", colour = NA),
     strip.background = element_rect(fill = "lightgray", colour = NA),
-    strip.text =  element_text(color = "#222438", family = "Open Sans Light", size = 18),
+    strip.text =  element_text(color = "#222438", family = "Oswald", size = 18),
     axis.ticks = element_blank(),
     legend.position = "none",
     panel.grid.major = element_line(colour = "#3D405B", size = 0.09),
@@ -158,9 +159,9 @@ hchart(
   hc_xAxis(minorGridLineWidth = 5, categories = eje_x, gridLineColor = "black", 
            title = list(text = NULL), ceiling = 365) %>% 
   hc_chart(backgroundColor="white", borderColor = "transparent", 
-           style=list(fontFamily = "Open Sans", fontSize = 12)) %>% 
+           style=list(fontFamily = "Oswald", fontSize = 12)) %>% 
   hc_tooltip(enabled = T, valueDecimals = 2, borderWidth = 0.01, 
-            backgroundColor = "white",  style = list(fontFamily = "Open Sans"),
+            backgroundColor = "white",  style = list(fontFamily = "Oswald"),
              pointFormat=paste("<b>{point.etiqueta}</b><br>
                                <b>{point.n}</b> conflictos<br>"),
              headerFormat = "") %>% 
@@ -169,7 +170,6 @@ hchart(
 #-----------------------------
 # treemap
 #-----------------------------
-
 df %>% 
   count(sector_a, sub_sector_a) %>% 
   mutate(
@@ -227,15 +227,13 @@ hchart(
     text = "< Volver"
   ),
   levels = lvl_opts,
-  tooltip = list(valueDecimals = FALSE) 
+  tooltip = list(valueDecimals = 2) 
 ) %>% 
   hc_chart(
-    style = list(fontFamily = "Open Sans")
+    style = list(fontFamily = "Oswald")
   ) %>% 
   hc_size(height = 700) %>% 
-  hc_tooltip(backgroundColor =  "white", borderWidth =  0.001) -> tree_map_1
-
-
+  hc_tooltip(backgroundColor =  "white", borderWidth =  0.001 ) -> tree_map_1
 
 # treemap de quienes son los demandados
 df %>% 
@@ -300,7 +298,7 @@ hchart(
   tooltip = list(valueDecimals = FALSE)
 ) %>% 
   hc_chart(
-    style = list(fontFamily = "Open Sans")
+    style = list(fontFamily = "Oswald")
   ) %>% 
   hc_tooltip(backgroundColor =  "white", borderWidth =  0.001) %>% 
   hc_size(height = 700)  -> tree_map_3
@@ -349,14 +347,60 @@ mapas %<>%
 ggplot(mapas) +
   geom_sf(aes(fill = key), color = "white", size = 0.009) + 
   scale_fill_manual(values = rev(c("#222438", "#E07A5F"))) +
-  ggthemes::theme_map(base_family = "Open Sans") + 
+  ggthemes::theme_map(base_family = "Oswald") + 
   facet_wrap(~etiqueta) + 
   theme_map() -> mapa_donde
+
+#-----------------
+# donde: motion
+#-----------------
+lat_lon <- read_csv("input/lat_lon_339_cent.csv") %>% select(CODIGO, name = MUNICIPIO, lat, lon)
+df %>% 
+  mutate(año = lubridate::year(fecha)) %>% 
+  group_by(año, departamento, localidad_o_municipio, codigo) %>% 
+  count() %>% 
+  filter(año > 2009) %>% 
+  ungroup() %>% 
+  rename(CODIGO = codigo) %>%
+  filter(!is.na(CODIGO)) %>% 
+  group_by(CODIGO, año) %>% 
+  summarise(z = sum(n)) %>% 
+  spread(año, z) %>% 
+  gather(año, value, -CODIGO) %>% 
+  select(-año) %>% 
+  group_by(CODIGO) %>% 
+  nest() -> temp
+
+temp %<>% 
+  ungroup() %>% 
+  mutate(sequence = map(temp$data, pull)) %>% 
+  select(-data) %>% 
+  left_join(., lat_lon) 
+
+hcmap(
+  "countries/bo/bo-all",
+  showInLegend = FALSE,
+  borderColor = "#f1faee",
+  borderWidth = 0.0001,
+  nullColor = "#222438"
+) %>% 
+  hc_add_series(data = temp, type = "mapbubble",
+                minSize = "2",
+                maxSize = "50",
+                color = hex_to_rgba("#E07A5F", alpha = 1),
+                borderColor = "lightgray",
+                showInLegend = FALSE) %>% 
+  hc_motion(enabled = TRUE, series = c(0,1), labels = paste0("año: ", c(2010:2020)) ,
+            autoPlay = TRUE, 
+            updateInterval = 800, magnet = list(step =  1)) %>% 
+  hc_tooltip(enabled = T, valueDecimals = 0, borderWidth = 0.01, 
+             style = list(fontFamily = "Oswald"), backgroundColor =  "white",
+             headerFormat = "") %>% 
+  hc_size(height = 600) -> mapa_motion
 
 #-----
 #Dependency wheel demandante vs demandado
 #--------
-
 df1 <- df %>% 
   mutate(year = lubridate::year(fecha))
 df1 <-  merge((df1 %>% filter(year >= 2010) %>% select(id, sector_a) %>% distinct()),
@@ -373,7 +417,7 @@ dependency <- highchart() %>%
     type = "dependencywheel",
     polar = FALSE,
     inverted = FALSE, 
-    style = list(fontFamily = "Open Sans")
+    style = list(fontFamily = "Oswald")
   ) %>% 
   hc_xAxis(
     categories = df1$from
@@ -393,7 +437,7 @@ dependency <- highchart() %>%
   ) %>% 
   hc_tooltip(
     outside = TRUE,
-    style = list(fontFamily = "Open Sans", fontSize = 15),
+    style = list(fontFamily = "Oswald", fontSize = 15),
     borderWidth = 0.01,
     backgroundColor =  "white"
   )
@@ -460,9 +504,9 @@ hcmap <- highchart(type = "map") %>%
                                2019: <b>{point.a_2019}</b><br>
                                2020: <b>{point.a_2020}</b>"),
              headerFormat = "",
-             fontFamily = "Open Sans",
+             fontFamily = "Oswald",
              borderWidth = 0.8) %>% 
-  hc_chart(style = list(fontFamily = "Open Sans"))
+  hc_chart(style = list(fontFamily = "Oswald"))
   
 
 
@@ -528,7 +572,7 @@ hbr_gestion_nivel <- hbr_yn %>%
   )) %>%
   hc_tooltip(enabled = T, valueDecimals = 0, borderWidth = 0.01,
              crosshairs = TRUE, shared = TRUE, backgroundColor = "white",
-             style = list(fontFamily = "Open Sans",
+             style = list(fontFamily = "Oswald",
                           color = "black", fontSize = 14),
              headerFormat = "<br><b>{point.key}</b><br><br>Total: <b>{point.total}</b><br>") %>%
   hc_add_theme(hc_theme_smpl(
@@ -539,7 +583,7 @@ hbr_gestion_nivel <- hbr_yn %>%
       labels = list(style = list(fontSize = "15px"), useHTML = TRUE)
     )
   )) %>%
-  hc_chart(backgroundColor="#FFFFFF", style = list(fontFamily = "Open Sans",
+  hc_chart(backgroundColor="#FFFFFF", style = list(fontFamily = "Oswald",
                                                    color = "black")) 
 
 
@@ -611,15 +655,12 @@ hbr_sector_nivel <- hbr_sn %>%
   )) %>%
   hc_tooltip(enabled = T, valueDecimals = 0, borderWidth = 0.01,
              crosshairs = TRUE, shared = TRUE, backgroundColor = "white",
-             style = list(fontFamily = "Open Sans",
+             style = list(fontFamily = "Oswald",
                           color = "black", fontSize = 14),
              headerFormat = "<br><b>{point.key}</b><br>
                               <br>Total: <b>{point.total}</b><br>") %>%
-  hc_chart(backgroundColor="#FFFFFF", style = list(fontFamily = "Open Sans",
+  hc_chart(backgroundColor="#FFFFFF", style = list(fontFamily = "Oswald",
                                                    color = "black"))
-
-
-
 
 #-----
 # Tortas ALCANCE 
@@ -646,12 +687,12 @@ pie_alcance_total <- df1 %>%
   ) %>% 
   hc_tooltip(
     valueDecimals = 2, borderWidth = 0.001,
-    style = list(fontFamily = "Open Sans", fontSize = 15),
+    style = list(fontFamily = "Oswald", fontSize = 15),
     pointFormat=paste("<br>Alcance: <b>{point.alcance}</b><br>
                       Cantidad: <b>{point.frecuencia}</b><br>
                       Porcentaje: <b>{point.porcentaje} % </b>"),
     headerFormat = "",
-    fontFamily = "Open Sans",
+    fontFamily = "Oswald",
     backgroundColor = "white") %>% 
   hc_colors(c("#E01F52", "#C6A659", "#06D6A0", "#466B77", "#073B4C", 
               "#FCBF49", "#F77F00")) 
@@ -682,17 +723,17 @@ create_hc <- function(t) {
     ) %>% 
     hc_tooltip(
       valueDecimals = 2, borderWidth = 0.001, backgroundColor = "white",
-      style = list(fontFamily = "Open Sans", fontSize = 15),
+      style = list(fontFamily = "Oswald", fontSize = 15),
       pointFormat=paste("<br>Alcance: <b>{point.alcance}</b><br>
                       Cantidad: <b>{point.value}</b>"),
       headerFormat = "") %>% 
     hc_colors(c("#E01F52", "#C6A659", "#06D6A0", "#466B77", "#073B4C", 
                 "#FCBF49", "#F77F00")) %>% 
     hc_title(text = paste0("Año ", nombre)) %>% 
-    hc_chart(style = list(fontFamily = "Open Sans"))
+    hc_chart(style = list(fontFamily = "Oswald"))
   #              style = list(useHTML = TRUE, 
   #                           fontSize = "18",
-  #                           fontFamily = "Open Sans"))
+  #                           fontFamily = "Oswald"))
   
   
   
@@ -722,21 +763,21 @@ df1 <- conflictos %>% filter(year >= 2010) %>%  select(id, ambito) %>% distinct(
 pie_ambito_total <- df1 %>%
   hchart(
     "pie", hcaes(x = ambito, y = frecuencia),
-    name = "Total Conflicots"
+    name = "Total Conflicots", borderWidth = 0
   ) %>% 
   hc_tooltip(
-    valueDecimals = 2, borderWidth = 0.8,
-    style = list(fontFamily = "Open Sans", fontSize = 15),
-    pointFormat=paste("<br>Ámbito: <b>{point.ambitoe}</b><br>
+    valueDecimals = 2, borderWidth = 0.01, backgroundColor = "white",
+    style = list(fontFamily = "Oswald"),
+    pointFormat=paste("<br>Ámbito: <b>{point.ambito}</b><br>
                       Cantidad: <b>{point.frecuencia}</b><br>
                       Porcentaje: <b>{point.porcentaje} % </b>"),
     headerFormat = "",
-    fontFamily = "Open Sans",
+    fontFamily = "Oswald",
     borderWidth = 0.8) %>% 
   hc_colors(c("#81B29A", "#63585F", 
               "#B4B5BA", "#261F23", "#575D7C", "#9194C6", "#75184D"
   )) %>% 
-  hc_chart(style = list(fontFamily = "Open Sans"))
+  hc_chart(style = list(fontFamily = "Oswald"))
 
 
 # Facet pies
@@ -766,14 +807,14 @@ create_hc <- function(t) {
     ) %>% 
     hc_tooltip(
       valueDecimals = 2, borderWidth = 0.01, backgroundColor = "white",
-      style = list(fontFamily = "Open Sans", fontSize = 15),
+      style = list(fontFamily = "Oswald", fontSize = 15),
       pointFormat=paste("<br>Ámbito: <b>{point.ambito}</b><br>
                       Cantidad: <b>{point.value}</b>"),
       headerFormat = "") %>% 
     hc_colors(c("#81B29A", "#63585F", 
                 "#B4B5BA", "#261F23", "#575D7C", "#9194C6", "#75184D")) %>% 
     hc_title(text = paste0("Año ", nombre)) %>% 
-    hc_chart(style = list(fontFamily = "Open Sans"))
+    hc_chart(style = list(fontFamily = "Oswald"))
   
   
   hc_pie
@@ -853,7 +894,7 @@ hchart(
   tooltip = list(valueDecimals = FALSE)
 ) %>% 
   hc_chart(
-    style = list(fontFamily = "Open Sans")
+    style = list(fontFamily = "Oswald")
   ) %>% 
   hc_size(height = 700)  -> tree_map_demandante_year
 

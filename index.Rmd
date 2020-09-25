@@ -11,31 +11,60 @@ source("codigo/graficos_generales.R")
 Sys.setlocale(locale = "es_ES.UTF-8")
 ```
 
-<center><b><h1>11 años de conflictividad en Bolivia</h1></b></center>
-<center><b><h2>2010-2020</h2></b></center>
+<div class="div-1">
+<center><b><h1>11 AÑOS DE CONFLICTIVIDAD EN BOLIVIA</h1></b></center>
+<center><b><h1>2010-2020</h1></b></center>
 
-<center>Última actualización: `r format(Sys.time(), '%d %B, %Y, %X  %Z')`</center>
-<center><img src="img/hand.svg" width="100" height="300"></center>
+<center><img src="img/puno.svg" width="400" height="400"></center>
+</div>
 
+<br>
 
-<center><h1>Conflictos sociales por día</h1></center>
+<div class="div-2">
+
 <br>
-<small><center>Los siguientes calendarios muestran el promedio de conflictos sociales por día.</center></small>
-```{r, include=T, echo = F, fig.align='center', fig.width=9, fig.height=6}
-calendario
-```
 <br>
-<center><h1>Intensidad de los conflictos por día</h1></center>
 <br>
-<small><center>Este gráfico muestra más de 3800 días y la cantidad de conflictos en cada uno de ellos.El color representa la intensidad de los conflcitos en ese día: mientras más oscuro mayor número de conflcitos y mientras más claro menor frecuencia de conflictos. Pase el mouse sobre cualquier día para conocer mayores detalles</center></small>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<center><h1>CONFLICTOS SOCIALES POR DÍA</h1></center>
+<br>
+<br>
+<small><center>Este gráfico muestra información de más de 3800 días de conflictos. Cada día es un rectángulo y  su color representa la frecuencia de conflictos: mientras más oscuros mayores disputas y mientras más claro, menores. Pase el mouse sobre cualquier día para conocer mayores detalles</center></small>
 <br>
 ```{r, include=T, echo = F}
 años_juntos
 ```
+<br>
+<br>
+<center><h1>PROMEDIO DE CONFLICTOS POR DÍA Y AÑO</h1></center>
+<br>
+```{r, include=T, echo = F, fig.align = 'center', fig.height = 7, fig.width=7}
+calendario
+```
+<br>
+<br>
+<br>
 
-<center><h1>Causas de los conflictos</h1></center>
+<center><h1>CAUSAS DE LOS CONFLICTOS</h1></center>
 <center><h3>**12928** conflictos,  **17** razones</h3></center>
-<center><small>Las razones están ordendas de mayor a menor. Pase el mouse sobre el gráfico para mayores detalles. Desactive y active las categorías de la leyenda</small></center>
+<center><small>Las razones están ordendas de mayor a menor. Pase el mouse sobre el gráfico para mayores detalles. Desactive y active las categorías de la leyenda haciendo click sobre ellas</small></center>
 <br>
 <br>
 ```{r, include=T, echo = F}
@@ -43,15 +72,20 @@ razones_conflicto
 ```
 <br>
 <br>
-<center><h1>43 sectores movilizados en 10 años</h1></center>
+<center><h1>¿QUIÉNES DEMANDAN?</h1></center>
+<br>
+<center><h2>43 sectores movilizados en 10 años</h2></center>
 <center><small>Las áreas muestran la proporción de los sectores movilizados respecto al total. Los datos están en porcentaje. En muchos casos los sectores tienen "subsectores". Para saber este nivel de detalle, haga click sobre el sector del cual desea tener mayor información</small></center>
 <br>
 <br>
 ```{r, include=T, echo = F}
 tree_map_1
 ```
-
-<center><h1>42 instituciones/sectores demandados</h1></center>
+<br>
+<br>
+<center><h1>¿QUIÉNES SON LOS DEMANDADOS?</h1></center>
+<br>
+<center><h2>42 instituciones/sectores demandados</h2></center>
 <center><small>Las áreas muestran la proporción de los sectores demandados respecto al total. Los datos están en porcentaje. En miuchos casos los sectores tienen "subsectores". Para saber este nivel de detalle, haga click sobre el sector del cual desea tener mayor información</small></center>
 <br>
 <br>
@@ -61,34 +95,34 @@ tree_map_3
 
 <br>
 <br>
-<center><h1>¿Dónde ocurren los conflictos?</h1></center>
+<center><h1>¿DÓNDE OCURREN LOS CONFLICTOS?</h1></center>
 <br>
 <center><h2>Sobre un total de 339 municipios</h2></center>
-
+<br>
 </small><center>Los mapas muestran donde **si** y donde **no** ocurren los conflcitos por año. En un siguiente mapa se puede observar la intensidad de los conflictos.</center></small>
 ```{r, include=T, echo = F, fig.width = 10, fig.height = 10}
 mapa_donde
 ```
 <br>
 <br>
-<center><h2>En 10 años se registraron conflictos en 268 municipios (79% de los municipios) </h2></center>
-<center><small> Pase el mouse sobre los municipios para ver la cantidad deconflictos por año.</small></center>
+<center><h2>En 10 años se registraron conflictos en 108 municipios (32% de los municipios) </h2></center>
+<center><small>Cada  burbuja representa al municipio donde se presenta el conflicto, su tamaño muestra el número de conflcitos en ese año. El cuadrado blanco en la parte inferior izquierda se usa para activar y detener la animación. Pase el mouse sobre las burbujas para ver la cantidad de conflictos por año y municipio.</small></center>
 <br>
 <br>
 ```{r, include=T, echo = F}
-hcmap
+mapa_motion
 ```
 <br>
-<center><h3>¿Cuál es la relación entre el que demanda y el demandado?</h3></center>
+<center><h1>¿CUÁL ES LA RELACIÓN ENTRE EL QUE DEMANDA Y EL DEMANDADO?</h1></center>
 <br>
-<center><h3>**12292** conflictos entre **43** sectores en 11 años</h3></center>
-<center><small> Cada color representa un sector y las curvas conectan sectores que tuvieron algún conflicto, ess decir al demandado con el demandante. El ancho de las conexiones muestra la cantidad de conflictos entre estos dos sectores. Pase el mouse sobre los sectores y sobre las conexiones para mayores detalles.  </small></center>
+<center><h2>**12292** conflictos entre **43** sectores en 11 años</h2></center>
+<br>
+<center><small> Cada color representa un sector y las curvas conectan sectores que tuvieron algún conflicto, ess decir al demandado con el demandante. El ancho de las conexiones muestra la cantidad de conflictos entre estos dos sectores. Pase el mouse sobre los sectores y sobre las conexiones para mayores detalles.</small></center>
 <br>
 ```{r, include=T, echo = F}
 dependency
 ```
 <br>
-
 <br>
 <br>
 <center><h2>En 11 años la cantidad de conflictos anuales fue variando </h2></center>
@@ -174,5 +208,5 @@ facet_ambito_pie %>%
 ```{r, include=T, echo = F,  fig.align = "center"}
 tree_map_demandante_year
 ```
-
+</div>
 

@@ -21,21 +21,37 @@ a {
 
 /*----------------- font-color ---------------------*/  
 h1 {
- color: #3f3f3f;
+ color: #353535;
+ font-size: 40px;
 }
 
 h2 {
- color: #3f3f3f;
+ color: #353535;
 }
 
 h3 {
- color: #3f3f3f;
+ color: #353535;
 }
 
 p { 
- color: #3f3f3f;
+ color: #353535;
 }
 
+small { 
+ color: #242424;
+ font-size: 20px;
+ font-family: 'Oswald';
+ font-weight: 300;
+}
+
+.div-1 {
+        background-color: #f9de69;
+        width: 100%;
+        z-index: 10;
+        top: 0;
+        left: 0;
+        position: absolute;
+    }
 
 
 
