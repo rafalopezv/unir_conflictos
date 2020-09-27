@@ -61,6 +61,22 @@ calendario
 <br>
 <br>
 <br>
+<center><h1>21 MEDIDAS DE PRESIÓN, 11 AÑOS</h1></center>
+<br>
+<center><small>Entre 2010 y 2020 los demandantes utilzizaon 21 diferentes medidas de presión. Pase el mouse sobre el gráfico para mayores detalles. Desactive y active las categorías de la leyenda haciendo click sobre ellas</small></center>
+<br>
+```{r, include=T, echo = F, fig.align = 'center', fig.height = 7, fig.width=7}
+medidas_presion
+```
+<br>
+<center><h1>SALIDAS A LOS CONFLICTOS</h1></center>
+<br>
+<center><small>el tamaño de los figuras muestra la magnitud de esa salida respecto a las otras. Se listan las 6 salidas principales</small></center>
+<br>
+```{r, include=T, echo = F, fig.align = 'center', fig.height = 7, fig.width=7}
+salidas
+```
+<br>
 
 <center><h1>CAUSAS DE LOS CONFLICTOS</h1></center>
 <center><h3>**12928** conflictos,  **17** razones</h3></center>
@@ -74,7 +90,7 @@ razones_conflicto
 <br>
 <center><h1>¿QUIÉNES DEMANDAN?</h1></center>
 <br>
-<center><h2>43 sectores movilizados en 10 años</h2></center>
+<center><h2>33 sectores movilizados en 11 años</h2></center>
 <center><small>Las áreas muestran la proporción de los sectores movilizados respecto al total. Los datos están en porcentaje. En muchos casos los sectores tienen "subsectores". Para saber este nivel de detalle, haga click sobre el sector del cual desea tener mayor información</small></center>
 <br>
 <br>
@@ -85,7 +101,8 @@ tree_map_1
 <br>
 <center><h1>¿QUIÉNES SON LOS DEMANDADOS?</h1></center>
 <br>
-<center><h2>42 instituciones/sectores demandados</h2></center>
+<center><h2>33 instituciones/sectores demandados</h2></center>
+<br>
 <center><small>Las áreas muestran la proporción de los sectores demandados respecto al total. Los datos están en porcentaje. En miuchos casos los sectores tienen "subsectores". Para saber este nivel de detalle, haga click sobre el sector del cual desea tener mayor información</small></center>
 <br>
 <br>
@@ -99,7 +116,8 @@ tree_map_3
 <br>
 <center><h2>Sobre un total de 339 municipios</h2></center>
 <br>
-</small><center>Los mapas muestran donde **si** y donde **no** ocurren los conflcitos por año. En un siguiente mapa se puede observar la intensidad de los conflictos.</center></small>
+</small><center>Los mapas muestran donde si y donde no ocurren los conflcitos por año. En un siguiente mapa se puede observar la intensidad de los conflictos.</center></small>
+<br>
 ```{r, include=T, echo = F, fig.width = 10, fig.height = 10}
 mapa_donde
 ```
@@ -200,7 +218,10 @@ facet_ambito_pie %>%
 
 <br>
 <br>
-<center><h2>43 sectores movilizados en 10 años </h2></center>
+<center><h1>SECTORES MOVILIZADOS EN 11 AÑOS</h1></center>
+<br>
+<center><h2>43 sectores movilizados</h2></center>
+<br>
 <center><small> Las áreas muestran la proporción de los demandantes respecto al total. Presiona cada área para ver como se distribuyen los conflictos anualmente</small></center>
 <br>
 <br>
@@ -208,5 +229,65 @@ facet_ambito_pie %>%
 ```{r, include=T, echo = F,  fig.align = "center"}
 tree_map_demandante_year
 ```
+<br>
+<br>
+<center><h1>SECTORES DEMANDADOS EN 11 AÑOS</h1></center>
+<br>
+<center><h2>42 sectores demandados</h2></center>
+<br>
+<center><small> Las áreas muestran la proporción de los sectores demandados respecto al total. Presiona cada área para ver como se distribuyen sectores demandados anualmente</small></center>
+<br>
+<br>
+
+```{r, include=T, echo = F,  fig.align = "center"}
+tree_map_demandado_year
+```
+
+<br>
+<br>
+<center><h1>SECTORES DEMANDANTES POR DEPARTAMENTO</h1></center>
+<br>
+<center><h2>43 sectores demandantes en 9 diferentes departamentos </h2></center>
+<center><small> Las burbujas representan a cada uno de los nueve departamentos. Dentro de cada departamento, cada burbuja representa a los secotres demandantes. Pasa el cursor por las burbujas para ver la cantidad de demandas de cada sector en cada departamento.</small></center>
+<br>
+<br>
+
+```{r, include=T, echo = F,  fig.align = "center"}
+hc_pa_bub
+```
+
+<br>
+<br>
+<center><h1>Demandas por año</h1></center>
+<br>
+<center><h2>17 tipos de demandas en 10 años de conflictos </h2></center>
+<br>
+<center><small> Las burbujas representan año. Dentro de cada año, cada burbuja representa a los tipos de demanda. Pasa el cursor por las burbujas para ver la cantidad de tipos de demandas en cada año.</small></center>
+<br>
+<br>
+
+```{r, include=T, echo = F,  fig.align = "center"}
+hc_pa_bub2
+```
+<br>
+<br>
+
+<center><h1>Alternativa: Demandas por año</h1></center>
+
+```{r, include=T, echo = F,  fig.align = "center"}
+rio_tipo
+```
+
+<br>
+<br>
+<center><h2> son más de 30 mil eventos que tuvieron una de las 25 medidas de presion y fueron de alguno de los 17 tipos de conlficto  </h2></center>
+<center><small> El siguiente grafico de calor muestra los cruces entre medidas de presión y tipos de conflcito. Pasa el cursor por la matriz para revisar la cantidad de eventos de cada cruce.</small></center>
+<br>
+<br>
+
+```{r, include=T, echo = F,  fig.align = "center"}
+heat_tipo_med
+```
+
 </div>
 

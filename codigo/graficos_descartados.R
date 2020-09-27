@@ -339,3 +339,72 @@ calendario_heatmap(a, b) +
     plot.margin = margin(0, 0, 0, 0, "cm")
   ) -> cal_2020
 
+
+#-------
+## Mapa Highcharter
+#--------
+mapa <- jsonlite::fromJSON("input/municipios.339.geojson", simplifyVector = F)
+coord_mun <- sf::st_read("input/municipios.339.geojson")
+
+temp <- df %>% mutate(year = lubridate::year(fecha)) %>% filter(!is.na(codigo), year >= 2010) %>% 
+  select(id, codigo, year) %>% distinct() %>% 
+  group_by(codigo) %>% 
+  mutate(cantidad = n()) %>% 
+  ungroup() %>% 
+  group_by(codigo, year, cantidad) %>% 
+  summarise(anual = n()) %>% select(codigo, year, anual, cantidad) %>% 
+  mutate(year = paste0("a_",year)) %>% 
+  spread(year, anual)  
+
+
+temp <- left_join((coord_mun %>% 
+                     mutate(municipio = MUNICIPIO) %>% 
+                     select(municipio, codigo = CODIGO) %>% filter(!is.na(codigo))),
+                  temp,
+                  by = "codigo") 
+
+
+temp[is.na(temp)] <- 0
+
+
+datos <- temp %>% rename(CODIGO = codigo) %>% select(-municipio)
+datos$geometry <- NULL
+
+colores <- c("#CCDCE1", "#3BC0ED", "#07F9B8", "#C6A659")
+secuencia <- as.numeric(quantile(unique(datos$cantidad)))
+secuencia[1] <- 1
+secuencia <- c(0,secuencia)
+
+datos <- datos %>% rename(value = cantidad)
+
+
+hcmap <- highchart(type = "map") %>%
+  hc_add_series(mapData = mapa, showInLegend = F, data = datos, 
+                value = "value", joinBy = "CODIGO",
+                borderColor = "lightgray", borderWidth = 0.05) %>% 
+  hc_colorAxis(stops = color_stops(10, c("#222438", "#E07A5F", "#F2CC8F"))) %>%
+  
+  #hc_colorAxis(dataClasses = color_classes(secuencia, colores)) %>% 
+  hc_tooltip(enabled = T, valueDecimals = 0, borderWidth = 0.001, backgroundColor =  "white",
+             pointFormat=paste("<br>Municipio: <b>{point.name}</b><br>
+                               Conflictos: <b>{point.value}</b><br>
+                               2010: <b>{point.a_2010}</b><br>
+                               2011: <b>{point.a_2011}</b><br>
+                               2012: <b>{point.a_2012}</b><br>
+                               2013: <b>{point.a_2013}</b><br>
+                               2014: <b>{point.a_2014}</b><br>
+                               2015: <b>{point.a_2015}</b><br>
+                               2016: <b>{point.a_2016}</b><br>
+                               2017: <b>{point.a_2017}</b><br>
+                               2018: <b>{point.a_2018}</b><br>
+                               2019: <b>{point.a_2019}</b><br>
+                               2020: <b>{point.a_2020}</b>"),
+             headerFormat = "",
+             fontFamily = "Oswald",
+             borderWidth = 0.8) %>% 
+  hc_chart(style = list(fontFamily = "Oswald"))
+
+
+
+hcmap <- hc_size(hcmap, 800, 800)
+
