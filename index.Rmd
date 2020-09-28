@@ -15,9 +15,27 @@ Sys.setlocale(locale = "es_ES.UTF-8")
 <center><b><h1>11 AÑOS DE CONFLICTIVIDAD EN BOLIVIA</h1></b></center>
 <center><b><h1>2010-2020</h1></b></center>
 
-<center><img src="img/puno.svg" width="400" height="400"></center>
+<center><img src="img/nata.png" ></center>
 </div>
 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 <br>
 
 <div class="div-2">
