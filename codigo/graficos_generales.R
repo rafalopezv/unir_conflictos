@@ -1277,3 +1277,335 @@ highchart() %>%
   hc_chart(style = list(fontFamily = "Oswald")) %>% 
   hc_tooltip(backgroundColor = "white", borderWidth = 0.001) -> salidas
 
+
+# tipo de conflcitos y duración
+df %>% 
+  group_by(id, tipo) %>% 
+  summarise(
+    min = as.Date(min(fecha)),
+    max = as.Date(max(fecha))
+  ) %>% 
+  mutate(
+    diferencia = max - min,
+    diferencia = diferencia + 1,
+    diferencia = as.numeric(diferencia)
+  ) %>% 
+  ungroup() %>% 
+  group_by(tipo) %>% 
+  summarise(
+    n = n(),
+    median = median(diferencia),
+    mean = mean(diferencia),
+    max = max(diferencia),
+    min = min(diferencia)
+  ) %>% 
+  filter(tipo != "Otro") %>% 
+  arrange(mean) %>% 
+  mutate_if(is.numeric, round, 1) -> temp
+
+
+
+highchart() %>% 
+  hc_add_series(data = temp, "scatter", hcaes(x = tipo, y = mean), 
+                color = "#870845", name = "Rt", linkedTo = "error") %>% 
+  hc_chart(style = list(fontFamily = "Open Sans")) %>% 
+  hc_plotOptions(
+    scatter = list(
+      marker = list(radius = 9, enabled = T, symbol = "circle"),
+      states = list(hover = list(halo = list(size = 1)))
+    )
+  ) %>% 
+  hc_xAxis(title = list(text = "Causas de los conflictos"), 
+           categories = temp$tipo) %>% 
+  hc_yAxis(title = list(text = "Días de duración del conflicto")) %>% 
+  hc_tooltip(enabled = T, valueDecimals = 1, borderWidth = 0.01, backgroundColor = "white",
+             pointFormat=paste("<b>{point.tipo}</b><br>
+                               Promedio de duración de conflictos: <b>{point.mean} días</b><br>
+                               Duración mínima: <b>{point.min}</b> día<br>
+                               Duración máxima: <b>{point.max}</b> días<br>"), 
+             headerFormat = "<b>{point.tipo}</b>", 
+             style = list(fontFamily = "Oswald")) %>% 
+  hc_chart(inverted = TRUE, style = list(fontFamily = "Oswald")) %>% 
+  hc_size(height = 800) -> tipo_duracion
+
+
+# TIEMPO Y DEMANDANTE 
+df %>% 
+  group_by(id, sector_b) %>% 
+  summarise(
+    min = as.Date(min(fecha)),
+    max = as.Date(max(fecha))
+  ) %>% 
+  mutate(
+    diferencia = max - min,
+    diferencia = diferencia + 1,
+    diferencia = as.numeric(diferencia)
+  ) %>% 
+  ungroup() %>% 
+  group_by(sector_b) %>% 
+  summarise(
+    n = n(),
+    median = median(diferencia),
+    mean = mean(diferencia),
+    max = max(diferencia),
+    min = min(diferencia)
+  ) %>% 
+  filter(sector_b != "Otro") %>% 
+  arrange(mean) %>% 
+  mutate_if(is.numeric, round, 1) -> temp
+
+
+
+highchart() %>% 
+  hc_add_series(data = temp, "scatter", hcaes(x = sector_b, y = mean), 
+                color = "#E01F52", name = "Rt", linkedTo = "error") %>% 
+  hc_chart(style = list(fontFamily = "Open Sans")) %>% 
+  hc_plotOptions(
+    scatter = list(
+      marker = list(radius = 9, enabled = T, symbol = "circle"),
+      states = list(hover = list(halo = list(size = 1)))
+    )
+  ) %>% 
+  hc_xAxis(title = list(text = "Sector demandado"), 
+           categories = temp$sector_b) %>% 
+  hc_yAxis(title = list(text = "Días de duración del conflicto")) %>% 
+  hc_tooltip(enabled = T, valueDecimals = 1, borderWidth = 0.01, backgroundColor = "white",
+             pointFormat=paste("<b>{point.tipo}</b><br>
+                               Promedio de duración de conflictos: <b>{point.mean} días</b><br>
+                               Duración mínima: <b>{point.min}</b> día<br>
+                               Duración máxima: <b>{point.max}</b> días<br>"), 
+             headerFormat = "<b>{point.tipo}</b>", 
+             style = list(fontFamily = "Oswald")) %>% 
+  hc_chart(inverted = TRUE, style = list(fontFamily = "Oswald")) %>% 
+  hc_size(height = 800) -> demandado_duracion
+
+
+#-----
+#Dependency wheel SUB demandante vs SUB demandado
+#--------
+
+conflictos <- df %>% 
+  mutate(year = lubridate::year(fecha))
+
+df1 <- merge((conflictos %>% filter(year >= 2010) %>% select(id, sub_sector_a) %>% distinct()),
+             (conflictos %>% filter(year >= 2010) %>% select(id, sub_sector_b) %>% distinct())) %>% 
+  group_by(sub_sector_a, sub_sector_b) %>% 
+  summarise(cantidad = n()) %>% 
+  ungroup() %>% 
+  mutate(porcentaje = prop.table(cantidad)*100) %>% 
+  arrange(desc(cantidad)) %>% select(from = sub_sector_a, to = sub_sector_b, weight = cantidad) %>% 
+  filter(!is.na(from), !is.na(to))
+
+
+hcdepend_sub_sectores <-  highchart() %>%
+  hc_chart(
+    type = "dependencywheel",
+    polar = FALSE,
+    inverted = FALSE,
+    style = list(fontFamily = "Oswald")
+  ) %>% 
+  hc_xAxis(
+    categories = df1$from
+  ) %>% 
+  hc_yAxis(
+    visible = TRUE
+  ) %>% 
+  hc_colors(c(rep(c("#E01F52", "#C6A659", "#06D6A0", "#466B77", "#073B4C", 
+                    "#D8B970", "#5FA1B7", "#118AB2", "#BAAB89", "#1E4D5C", 
+                    "#2C6E49", "#E07A5F", "#3D405B", "#81B29A", "#63585F", 
+                    "#B4B5BA", "#261F23", "#575D7C", "#9194C6", "#75184D"), 2), 
+              "#FCBF49", "#F77F00", "#1478AA")) %>% 
+  hc_add_series(
+    df1,
+    name = "",
+    showInLegend = FALSE
+  ) %>% 
+  hc_tooltip(
+    outside = TRUE,
+    style = list(fontFamily = "Oswald", fontSize = 15),
+    borderWidth = "white"
+  )
+
+
+#------
+# Drill Down Niveles vs años
+#------
+
+conflictos <- df %>% 
+  mutate(year = lubridate::year(fecha))
+
+
+temp1 <-  conflictos %>% filter(nivel > 0, year >= 2010) %>% select(id, nivel, year) %>% 
+  # distinct() %>% 
+  group_by(year, nivel) %>% 
+  summarise(cantidad = n()) %>% 
+  group_by(year) %>% 
+  mutate(total = sum(cantidad)) %>%
+  ungroup() %>%
+  mutate(
+    nivel = case_when(
+      nivel == 1 ~ "Latente",
+      nivel == 2 ~ "Manifiesto",
+      nivel == 3 ~ "Confrontación",
+      nivel == 4 ~ "Enfrentamiento violento",
+      nivel == 5 ~ "Crisis de gobernabilidad",
+    )
+  ) %>% group_by(nivel) %>% 
+  summarise(cantidad = sum(cantidad))
+
+
+temp2 <- conflictos %>% filter(nivel > 0, year >= 2010) %>% select(id, nivel, year) %>% 
+  # distinct() %>% 
+  group_by(year, nivel) %>% 
+  summarise(cantidad = n()) %>% 
+  group_by(year) %>% 
+  mutate(total = sum(cantidad)) %>%
+  ungroup() %>%
+  mutate(
+    nivel = case_when(
+      nivel == 1 ~ "Latente",
+      nivel == 2 ~ "Manifiesto",
+      nivel == 3 ~ "Confrontación",
+      nivel == 4 ~ "Enfrentamiento violento",
+      nivel == 5 ~ "Crisis de gobernabilidad",
+    )
+  ) %>% 
+  group_nest(nivel) %>% 
+  mutate(
+    id = nivel,
+    type = "column",
+    data = map(data, mutate, name = year, y = cantidad),
+    data = map(data, list_parse)
+  )
+
+
+
+
+x <- c("Cantidad")
+y <- c("{point.cantidad}")
+
+tt <- tooltip_table(x,y)
+
+nivel_drill <- hchart(
+  temp1,
+  "column",
+  hcaes(x = nivel, y = cantidad, name = nivel, drilldown = nivel),
+  name = "Cantidad",
+  colorByPoint = TRUE
+) %>% 
+  hc_drilldown(
+    allowPointDrilldown = TRUE,
+    series = list_parse(temp2)
+  ) %>% 
+  hc_tooltip(
+    pointFormat = tt, # "{point.name} {point.pop}"
+    useHTML = TRUE,
+    valueDecimals = 0
+  ) %>% 
+  hc_yAxis(
+    title = list(text = "Cantidad de eventos"),
+    # type = "logarithmic",
+    minorTickInterval = 'auto'
+  ) %>% 
+  hc_xAxis(
+    title = ""
+  ) %>% 
+  hc_colors(c("#06D6A0", 
+              "#C6A659",
+              "#82769D",
+              "#E01F52",
+              "#073B4C"
+  )) %>% 
+  hc_chart(style = list(fontFamily = "Oswald"))
+
+
+#------
+# Barras demandante vs tipo
+#------
+
+conflictos <- df %>% 
+  mutate(year = lubridate::year(fecha))
+
+
+
+temp <- merge((conflictos %>% select(id, sector_a) %>% distinct()),
+              (conflictos %>% select(id, tipo) %>% distinct())) %>% 
+  group_by(sector_a, tipo) %>% 
+  summarise(cantidad = n()) %>% 
+  ungroup() %>% 
+  mutate(porcentaje = prop.table(cantidad)*100) %>% 
+  arrange(desc(cantidad)) %>% 
+  group_by(sector_a) %>% 
+  mutate(total = sum(cantidad)) %>% select(-porcentaje) %>% 
+  ungroup() %>%
+  mutate(tipo = paste0("Tipo: ",tipo)) %>% 
+  spread(tipo, cantidad) %>% 
+  arrange(desc(total))
+
+
+
+temp[is.na(temp)] <- 0
+
+a_1 <- as.data.frame(temp) %>% rename(Demandante = sector_a)
+
+
+
+categories_column <- "Demandante"
+measure_columns <- c(colnames(a_1[3:length(a_1)]))
+
+
+hbr_sn <- highchart() %>%
+  hc_xAxis(categories = a_1[, categories_column],
+           title = categories_column)
+
+
+invisible(lapply(measure_columns, function(column) {
+  hbr_sn <<-
+    hc_add_series(hc = hbr_sn, name = column,
+                  data = a_1[, column])
+}))
+
+
+
+hbr_sector_tipo <- hbr_sn %>%
+  hc_chart(type = "bar") %>%
+  hc_plotOptions(series = list(stacking = "normal")) %>%
+  hc_legend(reversed = TRUE) %>% 
+  hc_colors(c("#E01F52", "#C6A659", "#06D6A0", "#466B77", "#073B4C",
+              "#D8B970", "#5FA1B7", "#118AB2", "#BAAB89", "#1E4D5C", 
+              "#2C6E49", "#E07A5F", "#3D405B", "#81B29A", "#63585F", 
+              "#B4B5BA", "#261F23", "#575D7C"
+  )) %>%
+  hc_tooltip(enabled = T, valueDecimals = 0, borderWidth = 0.01,
+             # crosshairs = TRUE, shared = TRUE,
+             style = list(fontFamily = "Oswald",
+                          color = "black", fontSize = 14),
+             headerFormat = "<br><b>{point.key}</b><br>
+                              <br>Total: <b>{point.total}</b><br>") %>%
+  # hc_add_theme(hc_theme_smpl(
+  #   yAxis = list(
+  #     labels = list(style = list(fontSize = "15px"), useHTML = TRUE)
+  #   ),
+  #   xAxis = list(
+  #     labels = list(style = list(fontSize = "15px"), useHTML = TRUE)
+  #   )
+  # )) %>%
+  hc_chart(backgroundColor="#FFFFFF", style = list(fontFamily = "Oswald",
+                                                   color = "black")) %>% 
+  hc_title(text = "Tipos de conflicto en sectores demandantes")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

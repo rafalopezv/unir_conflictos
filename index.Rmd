@@ -161,6 +161,17 @@ dependency
 <br>
 <br>
 <br>
+<br>
+<center><h1>RELACIÓN ENTRE EL SUB-SECTOR QUE DEMANDA Y EL-SUB SECTOR DEMANDADO</h1></center>
+<br>
+<center><h2>*12292* conflictos entre *52* Sub-Sectores en 11 años</h2></center>
+<br>
+<center><small> Cada color representa un sub-sector y las curvas conectan sub-sectores que tuvieron algún conflicto, ess decir al sub-sector demandado con el sub-sector demandante. El ancho de las conexiones muestra la cantidad de conflictos entre estos dos sub-sectores. Pase el mouse sobre los sub-sectores y sobre las conexiones para mayores detalles.</small></center>
+<br>
+```{r, include=T, echo = F}
+hcdepend_sub_sectores
+```
+<br>
 <center><h2>En 11 años la cantidad de conflictos anuales fue variando </h2></center>
 <center><small> Pase el mouse sobre las barras anuales para ver que nivel de conflictos se generaron cada año</small></center>
 <center><small> Puede desactivar/activar cada uno de los años presionando el año en la leyenda</small></center>
@@ -168,11 +179,19 @@ dependency
 <br>
 
 ```{r, include=T, echo = F,  fig.align = "center"}
-hbr_gestion_nivel
+nivel_drill
 ```
 
 <br>
 <br>
+<center><small> Presione sobre las barras correspondiente a cada nivel de conflictos para ver como se distribuyen los conflictos anualmente</small></center>
+<br>
+<br>
+```{r, include=T, echo = F,  fig.align = "center"}
+
+```
+
+
 <center><h2>En 11 años cada demandante tuvo diversos niveles de conflicto </h2></center>
 <center><small> Pase el mouse sobre los conflictos para ver la cantidad por nivel de cada demandante. Este grráfico ha sido porcentualizado, por tanto, mientras más espacio ocupe algún color (Nivel de conflictividad) es mayor su ejercicio por ese demandante</small></center>
 <center><small> Puede activar/desactivar los niveles presionando éstos en la leyenda</small></center>
@@ -305,6 +324,48 @@ rio_tipo
 
 ```{r, include=T, echo = F,  fig.align = "center"}
 heat_tipo_med
+```
+<br>
+<br>
+<center><h1>DURACIÓN DE LOS CONFLICTOS POR LA CAUSA QUE LOS PROPICIA</h1></center>
+<br>
+<br>
+<center><small> El siguiente gráfico mustra el promedio de duración de los conflictos por la causa de los mismos. Al pasar el mouse por cada cículo podrá ver la duración máxima y mínima, en días, de cada conflicto.</small></center>
+<br>
+```{r, include=T, echo = F,  fig.align = "center"}
+tipo_duracion
+```
+<br>
+<br>
+<br>
+
+<center><h1>DURACIÓN DE LOS CONFLICTOS POR DEMANDANTE</h1></center>
+<br>
+<br>
+<center><small> El siguiente gráfico mustra el promedio de duración de los conflictos de acuerdo al sector que demanda. Al pasar el mouse por cada cículo podrá ver la duración máxima y mínima, en días, de cada conflicto.</small></center>
+<br>
+```{r, include=T, echo = F,  fig.align = "center"}
+demandado_duracion
+```
+
+
+<center><h1>DURACIÓN DE LOS CONFLICTOS DE ACUERDO A QUIEN ES DEMANDADO</h1></center>
+<br>
+<br>
+<center><small> El siguiente gráfico mustra el promedio de duración de los conflictos de acuerdo al sector demandado. Al pasar el mouse por cada cículo podrá ver la duración máxima y mínima, en días, de cada conflicto.</small></center>
+<br>
+```{r, include=T, echo = F,  fig.align = "center"}
+demandado_duracion
+```
+<br>
+<br>
+<center><h1>En 11 años cada demandante tuvo diversos tipos de conflicto </h1></center>
+<center><small> Pase el mouse sobre los conflictos para ver la cantidad por tipo de cada demandante. Este gráfico ha sido porcentualizado, por tanto, mientras más espacio ocupe algún color (Tipo de conflictividad) es mayor su ejercicio por ese demandante</small></center>
+<center><small> Puede activar/desactivar los tipos presionando éstos en la leyenda</small></center>
+<br>
+<br>
+```{r, include=T, echo = F,  fig.align = "center"}
+hbr_sector_tipo
 ```
 
 </div>
