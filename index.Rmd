@@ -39,7 +39,7 @@ library(lazyrmd)
 <br>
 <small><center>Este gráfico muestra información de más de 3800 días de conflictos. Cada día es un rectángulo y  su color representa la frecuencia de conflictos: mientras más oscuros mayores disputas y mientras más claro, menores. Pase el mouse sobre cualquier día para conocer mayores detalles</center></small>
 <br>
-```{r, include=T, echo = F}
+```{r, include=T, echo = F, cache=TRUE}
 años_juntos
 ```
 <br>
@@ -56,7 +56,7 @@ calendario
 <br>
 <center><small>Entre 2010 y 2020 los demandantes utilzizaon 21 diferentes medidas de presión. Pase el mouse sobre el gráfico para mayores detalles. Desactive y active las categorías de la leyenda haciendo click sobre ellas</small></center>
 <br>
-```{r, include=T, echo = F, fig.align = 'center', fig.height = 7, fig.width=7}
+```{r, include=T, echo = F, cache=TRUE}
 medidas_presion_1
 ```
 <br>
@@ -64,7 +64,7 @@ medidas_presion_1
 <br>
 <center><small>Entre 2010 y 2020 los demandantes utilzizaon 21 diferentes medidas de presión. Pase el mouse sobre el gráfico para mayores detalles. Desactive y active las categorías de la leyenda haciendo click sobre ellas</small></center>
 <br>
-```{r, include=T, echo = F, fig.align = 'center', fig.height = 7, fig.width=7}
+```{r, include=T, echo = F, cache=TRUE}
 medidas_presion
 ```
 <br>
@@ -72,7 +72,7 @@ medidas_presion
 <br>
 <center><small>el tamaño de los figuras muestra la magnitud de esa salida respecto a las otras. Se listan las 6 salidas principales</small></center>
 <br>
-```{r, include=T, echo = F, fig.align = 'center', fig.height = 7, fig.width=7}
+```{r, include=T, echo = F, cache=TRUE}
 salidas
 ```
 <br>
@@ -82,7 +82,7 @@ salidas
 <center><small>Las razones están ordendas de mayor a menor. Pase el mouse sobre el gráfico para mayores detalles. Desactive y active las categorías de la leyenda haciendo click sobre ellas</small></center>
 <br>
 <br>
-```{r, include=T, echo = F}
+```{r, include=T, echo = F, cache=TRUE}
 razones_conflicto
 ```
 <br>
@@ -93,7 +93,7 @@ razones_conflicto
 <center><small>Las áreas muestran la proporción de los sectores movilizados respecto al total. Los datos están en porcentaje. En muchos casos los sectores tienen "subsectores". Para saber este nivel de detalle, haga click sobre el sector del cual desea tener mayor información</small></center>
 <br>
 <br>
-```{r, include=T, echo = F}
+```{r, include=T, echo = F, cache=TRUE}
 tree_map_1
 ```
 <br>
@@ -105,7 +105,7 @@ tree_map_1
 <center><small>Las áreas muestran la proporción de los sectores demandados respecto al total. Los datos están en porcentaje. En miuchos casos los sectores tienen "subsectores". Para saber este nivel de detalle, haga click sobre el sector del cual desea tener mayor información</small></center>
 <br>
 <br>
-```{r, include=T, echo = F}
+```{r, include=T, echo = F, cache=TRUE}
 tree_map_3
 ```
 
@@ -126,7 +126,7 @@ mapa_donde
 <center><small>Cada  burbuja representa al municipio donde se presenta el conflicto, su tamaño muestra el número de conflcitos en ese año. El cuadrado blanco en la parte inferior izquierda se usa para activar y detener la animación. Pase el mouse sobre las burbujas para ver la cantidad de conflictos por año y municipio.</small></center>
 <br>
 <br>
-```{r, include=T, echo = F}
+```{r, include=T, echo = F, cache=TRUE}
 mapa_motion
 ```
 <br>
@@ -136,7 +136,7 @@ mapa_motion
 <br>
 <center><small> Cada color representa un sector y las curvas conectan sectores que tuvieron algún conflicto, ess decir al demandado con el demandante. El ancho de las conexiones muestra la cantidad de conflictos entre estos dos sectores. Pase el mouse sobre los sectores y sobre las conexiones para mayores detalles.</small></center>
 <br>
-```{r, include=T, echo = F}
+```{r, include=T, echo = F, cache=TRUE}
 dependency
 ```
 <br>
@@ -147,7 +147,7 @@ dependency
 <br>
 <br>
 
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 hbr_gestion_nivel
 ```
 
@@ -156,7 +156,7 @@ hbr_gestion_nivel
 <center><small> Se puede ver la relación porcentual entre los diferentes niveles de conflicto anualmente</small></center>
 <br>
 <br>
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 hbr_gestion_nivel_perc
 ```
 
@@ -165,7 +165,7 @@ hbr_gestion_nivel_perc
 <center><small> Presione sobre las barras correspondiente a cada nivel de conflictos para ver como se distribuyen los conflictos anualmente</small></center>
 <br>
 <br>
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 nivel_drill
 ```
 
@@ -176,7 +176,7 @@ nivel_drill
 <br>
 <br>
 
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 hbr_sector_nivel
 ```
 <br>
@@ -184,7 +184,7 @@ hbr_sector_nivel
 <center><small> Se puede ver la relación porcentual entre los diferentes niveles de conflicto por cada demandante</small></center>
 <br>
 <br>
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 hbr_sector_nivel_perc
 ```
 
@@ -195,7 +195,7 @@ hbr_sector_nivel_perc
 <br>
 <br>
 
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 pie_ambito_total
 ```
 
@@ -206,7 +206,7 @@ pie_ambito_total
 <br>
 
 
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 facet_ambito_pie %>%
  map(hc_size, height = 300) %>%
   {print(hw_grid(.)); .} %>%
@@ -220,7 +220,7 @@ facet_ambito_pie %>%
 <br>
 <br>
 
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 pie_alcance_total
 ```
 
@@ -230,7 +230,7 @@ pie_alcance_total
 <br>
 <br>
 
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 facet_alcance_pie %>%
  map(hc_size, height = 300) %>%
   {print(hw_grid(.)); .} %>%
@@ -249,7 +249,7 @@ facet_alcance_pie %>%
 <br>
 <br>
 
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 tree_map_demandante_year
 ```
 <br>
@@ -262,7 +262,7 @@ tree_map_demandante_year
 <br>
 <br>
 
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 tree_map_demandado_year
 ```
 
@@ -275,7 +275,7 @@ tree_map_demandado_year
 <br>
 <br>
 
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 hc_pa_bub
 ```
 
@@ -289,7 +289,7 @@ hc_pa_bub
 <br>
 <br>
 
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 hc_pa_bub2
 ```
 <br>
@@ -297,7 +297,7 @@ hc_pa_bub2
 
 <center><h1>Alternativa: Demandas por año</h1></center>
 
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 rio_tipo
 ```
 
@@ -308,7 +308,7 @@ rio_tipo
 <br>
 <br>
 
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 heat_tipo_med
 ```
 <br>
@@ -318,7 +318,7 @@ heat_tipo_med
 <br>
 <center><small> El siguiente gráfico mustra el promedio de duración de los conflictos por la causa de los mismos. Al pasar el mouse por cada cículo podrá ver la duración máxima y mínima, en días, de cada conflicto.</small></center>
 <br>
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 tipo_duracion
 ```
 <br>
@@ -330,7 +330,7 @@ tipo_duracion
 <br>
 <center><small> El siguiente gráfico mustra el promedio de duración de los conflictos de acuerdo al sector que demanda. Al pasar el mouse por cada cículo podrá ver la duración máxima y mínima, en días, de cada conflicto.</small></center>
 <br>
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 demandado_duracion
 ```
 
@@ -340,7 +340,7 @@ demandado_duracion
 <br>
 <center><small> El siguiente gráfico mustra el promedio de duración de los conflictos de acuerdo al sector demandado. Al pasar el mouse por cada cículo podrá ver la duración máxima y mínima, en días, de cada conflicto.</small></center>
 <br>
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 demandado_duracion
 ```
 <br>
@@ -350,7 +350,7 @@ demandado_duracion
 <center><small> Puede activar/desactivar los tipos presionando éstos en la leyenda</small></center>
 <br>
 <br>
-```{r, include=T, echo = F,  fig.align = "center"}
+```{r, include=T, echo = F,  fig.align = "center", cache=TRUE}
 hbr_sector_tipo
 ```
 
