@@ -202,6 +202,8 @@ theme_map <- function(...) {
 # cambio de lenguage en fechas
 lang <- getOption("highcharter.lang")
 lang$decimalPoint <- ","
+lang$thousandsSep <- "."
+
 
 options(highcharter.lang = lang)
 
