@@ -1,0 +1,15 @@
+---
+output: 
+  html_fragment:
+    css: style_header.css  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<head class="div-1">
+<img src="img/entrada_copy.png" >
+</head>
+
+

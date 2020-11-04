@@ -1,19 +1,33 @@
 ---
-title: "Untitled"
 output: 
-  html_document:
-    css: style_copy.css
+  html_document: 
+    toc: false
+    toc_depth: 1
+    toc_float: true
+    includes:
+      in_header: header.html
+      before_body: below.html
+    css: style.css
+lang: es-CO
 ---
 
-<div class="div-1"> I love HTML 
-
-cscsc
-
-dsds
 
 
-dsdsd
+<small><center>nndasndñaldnlsaandlandlandlaasndaldnalsdnasldnasdnaslde más de 3800 días de conflictos. Cada día es un rectángulo y  su color representa la frecuencia de conflictos: mientras más oscuros mayores disputas y mientras más claro, menores. Pase el mouse sobre cualquier día para conocer mayores detalles</center></small>
+<br>
 
-dsdsdsdds
 
-</div>
+<small><center>nndasndñaldnlsaandlandlandlaasndaldnalsdnasldnasdnaslde más de 3800 días de conflictos. Cada día es un rectángulo y  su color representa la frecuencia de conflictos: mientras más oscuros mayores disputas y mientras más claro, menores. Pase el mouse sobre cualquier día para conocer mayores detalles</center></small>
+<br>
+
+<small><center>nndasndñaldnlsaandlandlandlaasndaldnalsdnasldnasdnaslde más de 3800 días de conflictos. Cada día es un rectángulo y  su color representa la frecuencia de conflictos: mientras más oscuros mayores disputas y mientras más claro, menores. Pase el mouse sobre cualquier día para conocer mayores detalles</center></small>
+<br>
+
+<small><center>nndasndñaldnlsaandlandlandlaasndaldnalsdnasldnasdnaslde más de 3800 días de conflictos. Cada día es un rectángulo y  su color representa la frecuencia de conflictos: mientras más oscuros mayores disputas y mientras más claro, menores. Pase el mouse sobre cualquier día para conocer mayores detalles</center></small>
+<br>
+
+<small><center>nndasndñaldnlsaandlandlandlaasndaldnalsdnasldnasdnaslde más de 3800 días de conflictos. Cada día es un rectángulo y  su color representa la frecuencia de conflictos: mientras más oscuros mayores disputas y mientras más claro, menores. Pase el mouse sobre cualquier día para conocer mayores detalles</center></small>
+<br>
+
+<small><center>nndasndñaldnlsaandlandlandlaasndaldnalsdnasldnasdnaslde más de 3800 días de conflictos. Cada día es un rectángulo y  su color representa la frecuencia de conflictos: mientras más oscuros mayores disputas y mientras más claro, menores. Pase el mouse sobre cualquier día para conocer mayores detalles</center></small>
+<br>

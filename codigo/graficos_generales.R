@@ -18,6 +18,7 @@ df %>%
   select(id, tipo) %>% 
   unique() %>% 
   count(tipo) %>% 
+  filter(tipo != "Otro") %>% 
   mutate(
     x_100 = round(n/10, 0),
     prop = prop.table(n)*100,
@@ -42,7 +43,7 @@ df %>%
              headerFormat = "") %>% 
     hc_credits(
       enabled = TRUE,
-      text = "cada cuadrado representa a 10 conflictos (enero 2010 - junioo 2020)",
+      text = "cada cuadrado representa a 10 conflictos (enero 2010 - junio 2020)",
       style = list(fontFamily = "Open Sans", fontSize = 13)
     ) %>% 
   hc_legend(layout = "horizontal") -> razones_conflicto
@@ -228,6 +229,7 @@ colores %<>%
 
 temp %<>% merge(., colores, alll.x = T)
 
+
 lvl_opts <-  list(
   list(
     level = 1,
@@ -257,8 +259,6 @@ lvl_opts <-  list(
 
 cols <- temp %>% pull(color) %>% unique
 
-
-
 hchart(
   data_to_hierarchical(temp, c(sector_a, sub_sector_a), porcentaje, colors = cols),
   type = "treemap",
@@ -277,7 +277,7 @@ hchart(
   hc_tooltip(backgroundColor =  "white", borderWidth =  0.001, valueSuffix = "%") %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junioo 2020)",
+    text = "(enero 2010 - junio 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) -> tree_map_1
 
@@ -484,7 +484,7 @@ hcmap(
 #Dependency wheel demandante vs demandado
 #--------
 df1 <- df %>% 
-  mutate(year = lubridate::year(fecha))
+  mutate(year = lubridate::year(fecha)) 
 df1 <-  merge((df1 %>% filter(year >= 2010) %>% select(id, sector_a) %>% distinct()),
               (df1 %>% filter(year >= 2010) %>% select(id, sector_b) %>% distinct())) %>% 
   group_by(sector_a, sector_b) %>% 
@@ -492,9 +492,12 @@ df1 <-  merge((df1 %>% filter(year >= 2010) %>% select(id, sector_a) %>% distinc
   ungroup() %>% 
   mutate(porcentaje = prop.table(cantidad)*100) %>% 
   arrange(desc(cantidad)) %>% select(from = sector_a, to = sector_b, weight = cantidad) %>% 
-  mutate(key = format(weight, nsmall = 2, big.mark=".")) 
-
-
+  filter(
+    from != "Otro",
+    to != "Otro"
+  ) 
+  
+  
 dependency <- highchart() %>%
   hc_chart(
     type = "dependencywheel",
@@ -519,12 +522,12 @@ dependency <- highchart() %>%
     showInLegend = FALSE
   ) %>% 
   hc_tooltip(
-    outside = F,
-    style = list(fontFamily = "Open Sans", fontSize = 15),
+    style = list(fontFamily = "Open Sans", fontSize = 13),
     borderWidth = 0.01,
     backgroundColor =  "white", 
-    pointFormat=paste("<b>{point.key}</b>")
-  ) %>% 
+    valueSuffix = "%", 
+    enabled = T, valueDecimals = 2
+  ) %>%
   hc_plotOptions(
     dependencywheel = list(
       dataLabels = list(
@@ -537,9 +540,10 @@ dependency <- highchart() %>%
   ) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junioo 2020)",
+    text = "(enero 2010 - junio 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   )
+
 
 #------
 # Barras año vs nivel
@@ -554,7 +558,7 @@ temp <- conflictos %>% filter(nivel > 0, year >= 2010) %>% select(id, nivel, yea
   mutate(total = sum(cantidad)) %>%
   ungroup() %>%
   mutate(
-    nivel = case_when(
+    nivel_1 = case_when(
       nivel == 1 ~ "Latente",
       nivel == 2 ~ "Manifiesto",
       nivel == 3 ~ "Confrontación",
@@ -562,34 +566,10 @@ temp <- conflictos %>% filter(nivel > 0, year >= 2010) %>% select(id, nivel, yea
       nivel == 5 ~ "Crisis de gobernabilidad",
     )
   ) %>% 
-  spread(nivel, cantidad) %>% 
-  mutate(total = format(total, nsmall = 2, big.mark="."))
+  mutate(total = format(total, nsmall = 2, big.mark=".")) %>% 
+  arrange(nivel)
 
-
-temp[is.na(temp)] <- 0
-
-a_1 <- as.data.frame(temp) #%>% rename(Año = year)
-
-
-categories_column <- "year"
-measure_columns <- c(colnames(a_1[3:length(a_1)]))
-
-
-hbr_yn <- highchart() %>%
-  hc_xAxis(categories = a_1[, categories_column],
-           title = categories_column)
-
-
-invisible(lapply(measure_columns, function(column) {
-  hbr_yn <<-
-    hc_add_series(hc = hbr_yn, name = column,
-                  data = a_1[, column])
-}))
-
-
-
-hbr_gestion_nivel <- hbr_yn %>%
-  hc_chart(type = "column") %>%
+hchart(temp, "column", hcaes(year, cantidad, group = nivel_1)) %>% 
   hc_plotOptions(series = list(stacking = "normal"), borderWidth = 0) %>%
   hc_legend(reversed = TRUE) %>% 
   hc_colors(c("#06D6A0", 
@@ -599,19 +579,19 @@ hbr_gestion_nivel <- hbr_yn %>%
               "#073B4C"
   )) %>%
   hc_tooltip(enabled = T, valueDecimals = 0, borderWidth = 0.01,
-             crosshairs = F, shared = TRUE, backgroundColor = "white",
+             crosshairs = F, shared = T, backgroundColor = "white", sort = T,
              style = list(fontFamily = "Open Sans",
                           color = "black", fontSize = 13),
-             headerFormat = "<br><b>{point.key}</b><br><br>Total: <b>{point.total}</b><br>") %>%
+             headerFormat = "") %>%
   hc_chart(backgroundColor="#FFFFFF", borderColor = "transparent", style = list(fontFamily = "Open Sans",
-                                                   color = "black")) %>% 
+                                                                                color = "black")) %>% 
   hc_xAxis(title = list(text = "Año")) %>% 
   hc_yAxis(title = list(text = "Frecuencia")) %>% 
   hc_credits(
     enabled = TRUE,
     text = "(enero 2010 - junioo 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
-  )
+  ) -> hbr_gestion_nivel
   
 # version en porcenajes %
 
@@ -668,11 +648,11 @@ hbr_gestion_nivel_perc <- hbr_yn %>%
               "#E01F52",
               "#073B4C"
   )) %>%
-  hc_tooltip(enabled = T, valueDecimals = 2, borderWidth = 0.01,
+  hc_tooltip(enabled = T, valueDecimals = 2, borderWidth = 0.01, sort = T,
              crosshairs = T, shared = TRUE, backgroundColor = "white", valueSuffix = "%",
              style = list(fontFamily = "Open Sans",
                           color = "black", fontSize = 13),
-             headerFormat = "<br><b>{point.key}</b><br><br></b><br>") %>%
+             headerFormat = "") %>%
   hc_chart(backgroundColor="#FFFFFF", borderColor = "transparent", style = list(fontFamily = "Open Sans",
                                                                                 color = "black")) %>% 
   hc_xAxis(title = list(text = "Año")) %>% 
@@ -749,24 +729,22 @@ hbr_sector_nivel <- hbr_sn %>%
               "#E01F52",
               "#073B4C"
   )) %>%
-  hc_tooltip(enabled = T, valueDecimals = 0, borderWidth = 0.01,
+  hc_tooltip(enabled = T, valueDecimals = 0, borderWidth = 0.01, sort = T,
              crosshairs = TRUE, shared = TRUE, backgroundColor = "white",
              style = list(fontFamily = "Open Sans",
                           color = "black", fontSize = 13),
-             headerFormat = "<br><b>{point.key}</b><br>
-                              <br>Total: <b>{point.total}</b><br>") %>%
+             headerFormat = "") %>%
   hc_chart(backgroundColor="#FFFFFF", style = list(fontFamily = "Open Sans",
                                                    color = "black")) %>% 
   hc_size(height = 1200) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junioo 2020)",
+    text = "(enero 2010 - junio 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   )
 
 
 # alternativa en porcentajes
-
 
 conflictos <- df %>% 
   mutate(year = lubridate::year(fecha))
@@ -830,10 +808,9 @@ hbr_sector_nivel_perc <- hbr_sn %>%
   )) %>%
   hc_tooltip(enabled = T, valueDecimals = 2, borderWidth = 0.01,
              crosshairs = TRUE, shared = TRUE, backgroundColor = "white",
-             style = list(fontFamily = "Open Sans",
+             style = list(fontFamily = "Open Sans",valueSuffix = "%",
                           color = "black", fontSize = 13),
-             headerFormat = "<br><b>{point.key}</b><br>
-                              <br>Valores en %</b><br>") %>%
+             headerFormat = "<br><b>{point.key}</b><br>") %>%
   hc_chart(backgroundColor="#FFFFFF", style = list(fontFamily = "Open Sans",
                                                    color = "black")) %>% 
   hc_yAxis(title = list(text = "Porcentaje %"),
@@ -858,7 +835,10 @@ df1 <- conflictos %>% filter(year >= 2010) %>%  select(id, alcance) %>% distinct
   group_by(alcance) %>% 
   summarise(frecuencia = n()) %>% 
   ungroup() %>% 
-  mutate(porcentaje = round(prop.table(frecuencia)*100,2)) %>% 
+  mutate(
+    porcentaje = round(prop.table(frecuencia)*100,2),
+    porcentaje = format(porcentaje, nsmall = 2, big.mark=",")
+  ) %>% 
   arrange(alcance)
 
 
@@ -948,7 +928,10 @@ df1 <- conflictos %>% filter(year >= 2010) %>%  select(id, ambito) %>% distinct(
   group_by(ambito) %>% 
   summarise(frecuencia = n()) %>% 
   ungroup() %>% 
-  mutate(porcentaje = round(prop.table(frecuencia)*100,2)) %>% 
+  mutate(
+    porcentaje = round(prop.table(frecuencia)*100,2),
+    porcentaje = format(porcentaje, nsmall = 2, big.mark=",")
+  ) %>% 
   arrange(ambito)
 
 pie_ambito_total <- df1 %>%
@@ -959,7 +942,7 @@ pie_ambito_total <- df1 %>%
   hc_tooltip(
     valueDecimals = 2, borderWidth = 0.01, backgroundColor = "white",
     style = list(fontFamily = "Open Sans"),
-    pointFormat=paste("<br>Ámbito: <b>{point.ambito}</b><br
+    pointFormat=paste("Ámbito: <b>{point.ambito}</b><br>
                       Porcentaje: <b>{point.porcentaje} % </b>"),
     headerFormat = "",
     fontFamily = "Open Sans",
@@ -1285,9 +1268,10 @@ df %>%
   group_by(gestion, tipo) %>% 
   summarise(frecuencia = n()) %>% 
   ungroup() %>% 
-  group_split(gestion) %>% 
-  map(., ~mutate(., frecuencia = prop.table(frecuencia)*100)) %>% 
-  bind_rows() %>% 
+  filter(tipo != "Otro") %>% 
+  # group_split(gestion) %>% 
+  # map(., ~mutate(., frecuencia = prop.table(frecuencia)*100)) %>% 
+  # bind_rows() %>% 
   mutate_if(is.numeric, round, 2) -> temp
   
 hchart(temp, "streamgraph", hcaes(gestion, frecuencia, group = tipo),
@@ -1300,7 +1284,7 @@ hchart(temp, "streamgraph", hcaes(gestion, frecuencia, group = tipo),
            )
          )
   ) %>% 
-  hc_tooltip(shared = T, table = T, sort = T, borderWidth = 0.001, valueSuffix = "%",
+  hc_tooltip(shared = T, table = T, sort = T, borderWidth = 0.001,
              style = list(fontFamily = "Open Sans"), backgroundColor = "white") %>% 
   hc_yAxis(visible = F) %>% 
   hc_xAxis(title = list(text = "")) %>% 
@@ -1319,7 +1303,6 @@ hchart(temp, "streamgraph", hcaes(gestion, frecuencia, group = tipo),
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) %>% 
   hc_legend(layout = "vertical") -> rio_tipo
-
 
 
 
@@ -1390,9 +1373,13 @@ df %>%
   mutate(
     prop = prop.table(n)*100,
     prop = round(prop, 2), 
-    n_1 = round(n/10, 0) 
+    n_1 = round(n/10, 0)
   ) %>% 
   filter(prop > 5) %>% 
+  mutate(
+    prop = format(prop, nsmall = 2, big.mark=","),
+    n = format(n, nsmall = 2, big.mark=".")
+  ) %>% 
   filter(!medida_de_presion %in% c("Anuncio/ amenaza de medidas de presión", "Declaración de estado de emergencia/movilización permanente")) %>% 
   arrange(desc(prop)) -> temp
 
@@ -1415,7 +1402,7 @@ temp %>%
              headerFormat = "") %>% 
   hc_credits(
     enabled = TRUE,
-    text = "cada cuadrado representa a 10 medidas de presión (enero 2010 - junio 2020)",
+    text = "cada círculo representa a 10 medidas de presión (enero 2010 - junio 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) %>% 
   hc_legend(layout = "horizontal") -> medidas_presion
@@ -1435,7 +1422,9 @@ df %>%
   mutate(
     prop = prop.table(n)*100,
     prop = round(prop, 2), 
-    n_1 = round(n/10, 0) 
+    n_1 = round(n/10, 0), 
+    prop = format(prop, nsmall = 2, big.mark=","),
+    n = format(n, nsmall = 2, big.mark=".")
   ) %>% 
  filter(medida_de_presion %in% c("Anuncio/ amenaza de medidas de presión", "Declaración de estado de emergencia/movilización permanente", "Ultimátum")) %>% 
  arrange(desc(prop)) -> temp
@@ -1446,7 +1435,7 @@ temp %>%
   hchart(
     "item", 
     hcaes(name = medida_de_presion, y = n_1),
-    marker = list(symbol = "circle"),
+    marker = list(symbol = "square"),
     showInLegend = TRUE
   ) %>% 
   hc_colors(colors = col) %>% 
@@ -1477,7 +1466,9 @@ df %>%
     salida = str_replace(salida, "Continúa", "Continúa el conflicto"),
     prop = prop.table(n)*100,
     prop = round(prop, 2), 
-    n_1 = round(n/10, 0) 
+    n_1 = round(n/10, 0), 
+    prop_1 = format(prop, nsmall = 2, big.mark=","),
+    n = format(n, nsmall = 2, big.mark=".")
   ) %>% 
   arrange(desc(prop)) -> temp
 
@@ -1485,10 +1476,9 @@ df %>%
 colores <- c("#264653","#2a9d8f","#e9c46a","#f4a261","#e76f51", "#e63946","#d90429", "#50514f", "#293241")
 
 hchart(temp, "column", hcaes(x = salida, y = prop, color = salida)) %>% 
-  hc_colors(colors = colores) %>% 
   hc_tooltip(enabled = T, valueDecimals = 2, borderWidth = 0.001, valueSuffix = "%",
              style = list(fontFamily = "Open Sans"), backgroundColor =  "white",
-             pointFormat =paste("<b>{point.salida}: </b>{point.prop}%"),
+             pointFormat =paste("<b>{point.salida}: </b>{point.prop_1}%"),
              headerFormat = "") %>% 
   hc_credits(
     enabled = TRUE,
@@ -1497,7 +1487,8 @@ hchart(temp, "column", hcaes(x = salida, y = prop, color = salida)) %>%
   ) %>% 
   hc_chart(style = list(fontFamily = "Open Sans")) %>% 
   hc_yAxis(title = list(
-    text = "Porcentaje (%)")) -> salidas
+    text = "Porcentaje (%)")) %>% 
+  hc_colors(colors = colores) -> salidas
   
   
 # highchart() %>% 
@@ -1608,6 +1599,11 @@ df %>%
     max = max(diferencia),
     min = min(diferencia)
   ) %>% 
+  mutate(
+    mean = round(mean, 2),
+    mean_1 = format(mean, nsmall = 2, big.mark=","),
+    max_1 = format(max, nsmall = 0, big.mark=".")
+  ) %>% 
   filter(tipo != "Otro") %>% 
   arrange(mean) %>% 
   mutate_if(is.numeric, round, 1) -> temp
@@ -1629,9 +1625,9 @@ highchart() %>%
   hc_yAxis(title = list(text = "Días de duración del conflicto")) %>% 
   hc_tooltip(enabled = T, valueDecimals = 1, borderWidth = 0.01, backgroundColor = "white",
              pointFormat=paste("<b>{point.tipo}</b><br>
-                               Promedio de duración de conflictos: <b>{point.mean} días</b><br>
+                               Promedio de duración de conflictos: <b>{point.mean_1} días</b><br>
                                Duración mínima: <b>{point.min}</b> día<br>
-                               Duración máxima: <b>{point.max}</b> días<br>"), 
+                               Duración máxima: <b>{point.max_1}</b> días<br>"), 
              headerFormat = "<b>{point.tipo}</b>", 
              style = list(fontFamily = "Open Sans")) %>% 
   hc_chart(inverted = TRUE, style = list(fontFamily = "Open Sans")) %>% 
@@ -1659,10 +1655,14 @@ df %>%
     max = max(diferencia),
     min = min(diferencia)
   ) %>% 
+  mutate(
+    mean = round(mean, 2),
+    mean_1 = format(mean, nsmall = 2, big.mark=","),
+    max_1 = format(max, nsmall = 0, big.mark=".")
+  ) %>% 
   filter(sector_b != "Otro") %>% 
   arrange(mean) %>% 
   mutate_if(is.numeric, round, 1) -> temp
-
 
 
 highchart() %>% 
@@ -1680,9 +1680,9 @@ highchart() %>%
   hc_yAxis(title = list(text = "Días de duración del conflicto")) %>% 
   hc_tooltip(enabled = T, valueDecimals = 1, borderWidth = 0.01, backgroundColor = "white",
              pointFormat=paste("<b>{point.tipo}</b><br>
-                               Promedio de duración de conflictos: <b>{point.mean} días</b><br>
+                               Promedio de duración de conflictos: <b>{point.mean_1} días</b><br>
                                Duración mínima: <b>{point.min}</b> día<br>
-                               Duración máxima: <b>{point.max}</b> días<br>"), 
+                               Duración máxima: <b>{point.max_1}</b> días<br>"), 
              headerFormat = "<b>{point.tipo}</b>", 
              style = list(fontFamily = "Open Sans")) %>% 
   hc_chart(inverted = TRUE, style = list(fontFamily = "Open Sans")) %>% 
@@ -1801,6 +1801,7 @@ temp <- merge((conflictos %>% select(id, sector_a) %>% distinct()),
   group_by(sector_a, tipo) %>% 
   summarise(cantidad = n()) %>% 
   ungroup() %>% 
+  filter(tipo != "Otro") %>% 
   mutate(porcentaje = prop.table(cantidad)*100) %>% 
   arrange(desc(cantidad)) %>% 
   group_by(sector_a) %>% 
@@ -1848,8 +1849,7 @@ hbr_sector_tipo <- hbr_sn %>%
              # crosshairs = TRUE, shared = TRUE,
              style = list(fontFamily = "Open Sans",
                           color = "black", fontSize = 14),
-             headerFormat = "<br><b>{point.key}</b><br>
-                              <br>Total: <b>{point.total}</b><br>") %>%
+             headerFormat = "<b>{point.key}</b><br>") %>%
   # hc_add_theme(hc_theme_smpl(
   #   yAxis = list(
   #     labels = list(style = list(fontSize = "15px"), useHTML = TRUE)
@@ -1868,18 +1868,154 @@ hbr_sector_tipo <- hbr_sn %>%
     style = list(fontFamily = "Open Sans", fontSize = 13)
   )
 
+#---------
+#  packed bubble tipos vs medidas (alternativa)
+#--------
+
+conflictos <- df %>%
+  mutate(year = lubridate::year(fecha))
+
+temp <- conflictos %>% mutate(gestion = lubridate::year(fecha)) %>% 
+  filter(gestion >= 2010) %>% 
+  select(id, tipo, medida_de_presion) %>% 
+  group_by(tipo, medida_de_presion) %>% 
+  summarise(frecuencia = n()) %>% 
+  filter(tipo != "Otro") %>% 
+  spread(medida_de_presion, frecuencia) %>% 
+  mutate_if(is.numeric, replace_na, 0) %>% 
+  gather(medida_de_presion, frecuencia, -tipo)
+
+unique(temp$tipo)
+
+hchart(conflictos %>% mutate(gestion = lubridate::year(fecha)) %>% 
+         filter(gestion >= 2010) %>% 
+         select(id, tipo, medida_de_presion) %>% 
+         group_by(tipo, medida_de_presion) %>% 
+         summarise(frecuencia = n()) %>% 
+         filter(tipo != "Otro") %>% 
+         spread(medida_de_presion, frecuencia) %>% 
+         mutate_if(is.numeric, replace_na, 0) %>% 
+         gather(medida_de_presion, frecuencia, -tipo),
+       "packedbubble",
+       hcaes(name = medida_de_presion, value = frecuencia, group = tipo)) %>% 
+  hc_colors(c("#E01F52", "#C6A659", "#06D6A0", "#466B77", "#073B4C", 
+              "#D8B970", "#5FA1B7", "#118AB2", "#BAAB89", "#1E4D5C",
+              "#2C6E49", "#E07A5F", "#3D405B", "#81B29A", "#63585F",
+              "#B4B5BA")) %>%
+  hc_plotOptions(packedbubble = list(
+    minSize = 5,
+    maxSize = 100,
+    zMin = 0,
+    zMax = 5000,
+    layoutAlgorithm = list(
+      gravitationalConstant = 0.01,
+      splitSeries = T,
+      seriesInteraction = F,
+      dragBetweenSeries = T,
+      parentNodeLimit = T
+    )
+  )
+  ) %>% 
+  hc_tooltip(enabled = T, valueDecimals = 2, borderWidth = 0.01, 
+             style = list(fontFamily = "Open Sans"), backgroundColor =  "white",
+             pointFormat=paste("Tipo demanda: <b>{point.tipo}</b><br>
+                               Medida de presión: <b>{point.medida_de_presion}</b><br>
+                               Total eventos: <b>{point.frecuencia}</b>"),
+             headerFormat = "") %>% 
+  hc_chart(style = list(fontFamily = "Open Sans")) %>% 
+  hc_credits(
+    enabled = TRUE,
+    text = "(enero 2010 - junio 2020)",
+    style = list(fontFamily = "Open Sans", fontSize = 13)
+  ) -> hcbub_tipo_medida
 
 
+#-----------
+#  Tree map Tipo vs medidas (alternativa)
+#-----------
+
+conflictos <- df %>%
+  mutate(year = lubridate::year(fecha))
+
+conflictos %>% 
+  count(sector_b, year) %>% 
+  mutate(
+    porcentaje = prop.table(n)*100,
+    porcentaje = round(porcentaje, 3)
+  ) %>% 
+  mutate_if(is.character, replace_na, "Sin clasficación") %>% 
+  rename(value = n) %>% 
+  arrange(sector_b, desc(value))-> temp
 
 
+temp <- conflictos %>% mutate(gestion = lubridate::year(fecha)) %>% 
+  filter(gestion >= 2010) %>% 
+  select(id, tipo, medida_de_presion) %>% 
+  group_by(tipo, medida_de_presion) %>% 
+  summarise(frecuencia = n()) %>% 
+  filter(tipo != "Otro") %>% 
+  spread(medida_de_presion, frecuencia) %>% 
+  mutate_if(is.numeric, replace_na, 0) %>% 
+  gather(medida_de_presion, frecuencia, -tipo)
+
+colores <- temp %>% select(tipo) %>% unique
+
+col <- c("#2C6E49", "#E07A5F", "#3D405B", "#81B29A", "#63585F",
+         "#E01F52", "#C6A659", "#06D6A0", "#466B77", "#073B4C", 
+         "#D8B970", "#5FA1B7", "#118AB2", "#BAAB89", "#1E4D5C", 
+         "#B4B5BA")
+
+col <- col[1:nrow(colores)]
 
 
+colores <- as.data.frame(colores) %>% 
+  mutate(color = col)
+
+temp %<>% merge(., colores, alll.x = T)
 
 
+lvl_opts <-  list(
+  list(
+    level = 1,
+    borderWidth = 0,
+    borderColor = "transparent",
+    dataLabels = list(
+      enabled = TRUE,
+      align = "left",
+      verticalAlign = "top",
+      style = list(fontSize = "13px", textOutline = FALSE, color = "black")
+    )
+  ),
+  list(
+    level = 2,
+    borderWidth = 0,
+    borderColor = "transparent",
+    colorVariation = list(key = "brightness", to = 0.250),
+    dataLabels = list(enabled = FALSE),
+    style = list(fontSize = "8px", textOutline = FALSE, color = "white")
+  )
+)
 
+cols <- temp %>% pull(color) %>% unique
 
-
-
-
-
-
+hchart(
+  data_to_hierarchical(temp, c(tipo, medida_de_presion), frecuencia, colors = cols),
+  type = "treemap",
+  levelIsConstant = T,
+  allowDrillToNode = T,
+  drillUpButton = list(
+    text = "< Volver"
+  ),
+  levels = lvl_opts,
+  tooltip = list(valueDecimals = 2)
+) %>% 
+  hc_chart(
+    style = list(fontFamily = "Oswald")
+  ) %>% 
+  hc_tooltip(backgroundColor = "white", borderWidth = 0.001) %>% 
+  hc_size(height = 700) %>% 
+  hc_credits(
+    enabled = TRUE,
+    text = "(enero 2010 - junio 2020)",
+    style = list(fontFamily = "Oswald", fontSize = 13)
+  ) -> tree_map_tipo_medida

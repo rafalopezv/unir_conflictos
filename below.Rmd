@@ -1,0 +1,26 @@
+---
+output: 
+  html_fragment:
+    css: style_header.css 
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<br>
+<br>
+
+<center><h1>SOBRE EL PROYECTO</h1></center>
+<br>
+
+---
+
+<b><small>Este proyecto tiene como objetivo............lorenipsumlorenipsumlore nipsumlorenipsumlorenipsumlorenipsumlorenipsumlorenipsumlorenipsumlorenipsumlorenipsum
+lorenipsumlorenipsumloren ipsuml renipsumloren ipsumlo renipsum lorenipsumlorenipsumlorenipsumlorenipsumlorenipsuml orenipsumlorenipsumlorenipsumlorenipsumlorenipsumlorenipsumlor enipsumlorenipsu mlorenipsumlorenips umlorenipsumlorenipsumlor enipsumlorenipsumlorenipsumlor enipsumlorenipsumlorenipsumlorenipsumlorenipsumlorenipsuml orenipsumlorenipsumlorenipsumlorenipsumlorenipsumlorenipsu mlorenipsumlorenipsumlorenipsumlorenipsumlorenipsumloren ipsumlorenipsumlorenip sumlorenipsum</small></b>
+
+
+---
+
+
+
+
