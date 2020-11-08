@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 <head class="div-1">
-<img src="img/entrada_copy.png" >
+<img src="img/tili.svg" >
 </head>
 
 
