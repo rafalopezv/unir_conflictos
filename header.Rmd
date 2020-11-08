@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 <head class="div-1">
-<img src="img/normal.svg" >
+<img src="img/prueba_fondo.svg" >
 </head>
 
 
