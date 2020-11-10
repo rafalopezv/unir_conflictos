@@ -7,6 +7,7 @@ output:
     includes:
       in_header: header.html
       before_body: below.html
+      after_body: footer.html
     css: style.css
 lang: es-COs
 ---
@@ -53,6 +54,8 @@ medidas_presion_1
 medidas_presion
 ```
 <br>
+<img src="img/complementaria_1.svg" >
+<br>
 <center><h1>SALIDAS A LOS CONFLICTOS</h1></center>
 <br>
 <center><small>¿Cómo concluyen los conflictos?, ¿Siguen vigentes?</small></center>
@@ -82,6 +85,9 @@ tree_map_1
 ```
 <br>
 <br>
+<img src="img/complementaria_2.svg" >
+<br>
+<br>
 <center><h1>¿QUIÉNES SON LOS DEMANDADOS?</h1></center>
 <br>
 <center><small>33 instituciones/sectores demandados. Las áreas muestran la proporción de los sectores demandados respecto al total. Los datos están en porcentaje. En muchos casos los sectores tienen "subsectores". Para saber este nivel de detalle, haga click sobre el sector del cual desea tener mayor información</small></center>
@@ -109,9 +115,14 @@ mapa_donde
 mapa_motion
 ```
 <br>
+<br>
+<img src="img/complementaria_3.svg" >
+<br>
+<br>
 <center><h1>¿CUÁL ES LA RELACIÓN ENTRE EL QUE DEMANDA Y EL DEMANDADO?</h1></center>
 <br>
 <center><small>12.292 conflictos entre 43 sectores. Cada color representa un sector y las curvas conectan sectores que tuvieron algún conflicto, ess decir al demandado con el demandante. El ancho de las conexiones muestra la cantidad de conflictos entre estos dos sectores. Pase el mouse sobre los sectores y sobre las conexiones para mayores detalles.</small></center>
+<br>
 <br>
 ```{r, include=T, echo = F}
 dependency
@@ -142,6 +153,8 @@ hbr_gestion_nivel_perc
 
 ## {-}
 
+
+
 <br>
 <center><small> Presione sobre las barras correspondiente a cada nivel de conflictos para ver como se distribuyen los conflictos anualmente</small></center>
 <br>
@@ -150,6 +163,9 @@ hbr_gestion_nivel_perc
 ```{r, include=T, echo = F,  fig.align = "center"}
 nivel_drill
 ```
+<br>
+<br>
+<img src="img/complementaria_4.svg" >
 <br>
 <br>
 
@@ -312,11 +328,15 @@ hcbub_tipo_medida
 tree_map_tipo_medida
 ```
 <br>
-
+<br>
+<img src="img/complementaria_5.svg" >
+<br>
+<br>
 <center><h1>DURACIÓN DE LOS CONFLICTOS POR LA CAUSA DEL MISMO</h1></center>
 <br>
 <br>
 <center><small> El siguiente gráfico muestra el promedio de duración de los conflictos por la causa de los mismos. Al pasar el mouse por cada círculo podrá ver la duración máxima y mínima, en días, de cada conflicto.</small></center>
+<br>
 <br>
 ```{r, include=T, echo = F,  fig.align = "center"}
 tipo_duracion

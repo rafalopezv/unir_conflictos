@@ -1,0 +1,14 @@
+---
+output: 
+  html_fragment:
+    css: style_header.css  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<footer>
+  <img src="img/salida.svg" >
+</footer>
+

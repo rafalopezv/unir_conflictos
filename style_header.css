@@ -9,6 +9,28 @@
         left: 0;
         position: absolute;
     }
+    
+.div-2 {
+        background-color: #F2CC8F;
+        width: 100%;
+        z-index: 10;
+        top: 0;
+        left: 0;
+        position: absolute;
+    }
+
+
+.footer {
+	/*padding: 10px 0;*/
+	text-align:right;
+	padding: 5px 0;
+	width:auto;
+	margin: 0 auto;
+	background-color: #047CFC;
+	color: #fff;
+	position: relative;/* this gives IE6 hasLayout to properly clear */
+	clear: both; /* this clear property forces the .container to understand where the columns end and contain them */
+}
 
 
 small { 
