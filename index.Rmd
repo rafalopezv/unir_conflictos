@@ -1,7 +1,7 @@
 ---
 output: 
   html_document: 
-    toc: false
+    toc: true
     toc_depth: 1
     toc_float: true
     includes:
