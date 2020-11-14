@@ -2,7 +2,7 @@
 
 
 .div-1 {
-        background-color: #FFFFFF;
+        background-color: #F2CC8F;
         width: 100%;
         z-index: 10;
         top: 0;
@@ -20,19 +20,6 @@
     }
 
 
-.footer {
-	/*padding: 10px 0;*/
-	text-align:right;
-	padding: 5px 0;
-	width:auto;
-	margin: 0 auto;
-	background-color: #047CFC;
-	color: #fff;
-	position: relative;/* this gives IE6 hasLayout to properly clear */
-	clear: both; /* this clear property forces the .container to understand where the columns end and contain them */
-}
-
-
 small { 
  color: #242424;
  font-size: 20px;
@@ -46,4 +33,24 @@ small_1 {
  font-size: 20px;
  font-family: 'Open Sans';
  font-weight: 800;
+}
+
+
+
+
+.footer {
+overflow: hidden;
+ }
+.footer img {
+    display:block;
+    margin:0px auto;
+    max-width:970px;
+    height: 130px;
+    overflow: hidden;
+}
+#copyright{
+position:absolute;
+color:#000;
+bottom:1px;
+left:46%;
 }

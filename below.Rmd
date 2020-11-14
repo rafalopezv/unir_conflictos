@@ -17,7 +17,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <b><small>Este proyecto tiene como objetivo............lorenipsumlorenipsumlore nipsumlorenipsumlorenipsumlorenipsumlorenipsumlorenipsumlorenipsumlorenipsumlorenipsum
 lorenipsumlorenipsumloren ipsuml renipsumloren ipsumlo renipsum lorenipsumlorenipsumlorenipsumlorenipsumlorenipsuml orenipsumlorenipsumlorenipsumlorenipsumlorenipsumlorenipsumlor enipsumlorenipsu mlorenipsumlorenips umlorenipsumlorenipsumlor enipsumlorenipsumlorenipsumlor enipsumlorenipsumlorenipsumlorenipsumlorenipsumlorenipsuml orenipsumlorenipsumlorenipsumlorenipsumlorenipsumlorenipsu mlorenipsumlorenipsumlorenipsumlorenipsumlorenipsumloren ipsumlorenipsumlorenip sumlorenipsum</small></b>
-
+<br>
+<br>
+<div><center>
+  <img src="img/unir.png" heigth = 120 width = 120/>
+  <img src="img/suecia.jpg" heigth = 120 width = 120/>
+  </center>
+  
+</div>
 
 ---
 

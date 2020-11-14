@@ -1,7 +1,7 @@
 ---
 output: 
   html_document: 
-    toc: true
+    toc: false
     toc_depth: 1
     toc_float: true
     includes:
@@ -18,7 +18,8 @@ source("codigo/graficos_generales.R")
 Sys.setlocale(locale = "es_ES.UTF-8")
 ```
 
-
+<br>
+<br>
 <br>
 <br>
 <center><h1>CONFLICTOS SOCIALES POR DÍA</center></h1>
@@ -26,14 +27,14 @@ Sys.setlocale(locale = "es_ES.UTF-8")
 <br>
 <small><center>Este gráfico muestra información de más de 3.800 días de conflictos. Cada día es un rectángulo y su color representa la frecuencia de conflictos: mientras más oscuro menores disputas y mientras más claro, mayores. Pase el mouse sobre cualquier día para conocer mayores detalles</center></small>
 <br>
-```{r, include=T, echo = F}
+```{r, include=T, echo = F, cache.lazy = T}
 años_juntos
 ```
 <br>
 <br>
 <center><h1>PROMEDIO DE CONFLICTOS POR DÍA Y AÑO</h1></center>
 <br>
-```{r, include=T, echo = F, fig.align = 'center', fig.height = 7, fig.width=7}
+```{r, include=T, echo = F}
 calendario
 ```
 <br>
@@ -42,7 +43,7 @@ calendario
 <br>
 <center><small>Los demandantes anuncian medidas de presión antes de acudir a medidas más radicales. Aquí las más usadas. Pase el mouse sobre el gráfico para mayores detalles. Desactive y active las categorías de la leyenda haciendo click sobre ellas</small></center>
 <br>
-```{r, include=T, echo = F}
+```{r, include=T, echo = F, cache.lazy = T}
 medidas_presion_1
 ```
 <br>
@@ -50,7 +51,7 @@ medidas_presion_1
 <br>
 <center><small>Entre 2010 y 2020 los demandantes utilizaron 21 diferentes medidas de presión. Se muestra aquí las 5 más utilizadas. Pase el mouse sobre el gráfico para mayores detalles. Desactive y active las categorías de la leyenda haciendo click sobre ellas</small></center>
 <br>
-```{r, include=T, echo = F}
+```{r, include=T, echo = F, cache.lazy = T}
 medidas_presion
 ```
 <br>
@@ -60,7 +61,7 @@ medidas_presion
 <br>
 <center><small>¿Cómo concluyen los conflictos?, ¿Siguen vigentes?</small></center>
 <br>
-```{r, include=T, echo = F}
+```{r, include=T, echo = F, cache.lazy = T}
 salidas
 ```
 <br>
@@ -70,7 +71,7 @@ salidas
 <center><small>12.928 conflictos,  16 razones. Las razones están ordenadas de mayor a menor. Pase el mouse sobre el gráfico para mayores detalles. Desactive y active las categorías de la leyenda haciendo click sobre ellas</small></center>
 <br>
 <br>
-```{r, include=T, echo = F}
+```{r, include=T, echo = F, cache.lazy = T}
 razones_conflicto
 ```
 <br>
@@ -80,7 +81,7 @@ razones_conflicto
 <center><small>33 sectores movilizados. Las áreas muestran la proporción de los sectores movilizados respecto al total. Los datos están en porcentaje. En muchos casos los sectores tienen "subsectores". Para saber este nivel de detalle, haga click sobre el sector del cual desea tener mayor información</small></center>
 <br>
 <br>
-```{r, include=T, echo = F}
+```{r, include=T, echo = F, cache.lazy = T}
 tree_map_1
 ```
 <br>
@@ -93,7 +94,7 @@ tree_map_1
 <center><small>33 instituciones/sectores demandados. Las áreas muestran la proporción de los sectores demandados respecto al total. Los datos están en porcentaje. En muchos casos los sectores tienen "subsectores". Para saber este nivel de detalle, haga click sobre el sector del cual desea tener mayor información</small></center>
 <br>
 <br>
-```{r, include=T, echo = F}
+```{r, include=T, echo = F, cache.lazy = T}
 tree_map_3
 ```
 
@@ -103,7 +104,7 @@ tree_map_3
 <br>
 </small><center>Sobre un total de 339 municipios. Los mapas muestran donde si y donde no ocurren los conflictos por año. En un siguiente mapa se podrá observar la intensidad de los conflictos.</center></small>
 <br>
-```{r, include=T, echo = F, fig.width = 10, fig.height = 10}
+```{r, include=T, echo = F, cache.lazy = T}
 mapa_donde
 ```
 <br>
@@ -111,7 +112,7 @@ mapa_donde
 <center><small>En 10 años los conflictos suceden en 108 municipios (32% del total). Cada  burbuja representa al municipio donde se presenta el conflicto, su tamaño muestra el número de conflictos en ese año. El cuadrado blanco en la parte inferior izquierda se usa para activar y detener la animación. Pase el mouse sobre las burbujas para ver la cantidad de conflictos por año y municipio.</small></center>
 <br>
 <br>
-```{r, include=T, echo = F}
+```{r, include=T, echo = F, cache.lazy = T}
 mapa_motion
 ```
 <br>
@@ -124,7 +125,7 @@ mapa_motion
 <center><small>12.292 conflictos entre 43 sectores. Cada color representa un sector y las curvas conectan sectores que tuvieron algún conflicto, ess decir al demandado con el demandante. El ancho de las conexiones muestra la cantidad de conflictos entre estos dos sectores. Pase el mouse sobre los sectores y sobre las conexiones para mayores detalles.</small></center>
 <br>
 <br>
-```{r, include=T, echo = F}
+```{r, include=T, echo = F, cache.lazy = T}
 dependency
 ```
 <br>
