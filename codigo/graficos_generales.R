@@ -13,6 +13,47 @@ colores <- c("#264653","#2a9d8f","#e9c46a","#f4a261","#e76f51", "#e63946","#d904
 colores_1 <- c("#222438","#262842","#3D405B","#CCF0F9","#870845", "#753855", "#E07A5F", "#F2CC8F", "#5BBF8F", "#BBEAD3")
 colores_2  <- c("#262842", "#5BBF8F", "#BBEAD3", "#870845", "#222438", "#E07A5F", "#3D405B", "#F2CC8F", "#CCF0F9", "#753855")
 
+
+# frecuencia de confpcits por año
+df %>% 
+  mutate(
+    año = lubridate::year(fecha)
+  ) %>% 
+  group_by(año) %>% 
+  count() %>% 
+  mutate(
+    n_aux = format(n, nsmall = 2, big.mark=".")
+  ) %>% 
+  filter(año > 2009) %>% 
+  hchart("line", hcaes(x = año, y = n)) %>% 
+  hc_chart(style = list(fontFamily = "Open Sans")) %>% 
+  hc_plotOptions(line = list(
+    lineWidth = 5,
+    connectNulls = F,
+    color = "#262842",
+    animation = list(
+      duration = 3000 
+    ),
+    marker = list(
+      enabled = T,
+      radius = 6
+    )
+  )
+) %>% 
+  hc_yAxis(title = list(text = "Número de conflictos")) %>% 
+  hc_xAxis(title = list(text = "Año")) %>% 
+  hc_tooltip(enabled = T, borderWidth = 0.01, 
+             style = list(fontFamily = "Open Sans"), backgroundColor =  "white",
+             pointFormat=paste("<b>Año: {point.año}</b><br>
+                               <b>{point.n_aux}</b> conflictos<br>"),
+             headerFormat = "") %>% 
+  hc_credits(
+    enabled = TRUE,
+    text = "enero 2010 - junio 2020",
+    style = list(fontFamily = "Open Sans", fontSize = 12)
+  )  -> n_conflictos
+  
+    
 # razones conflicto
 df %>% 
   select(id, tipo) %>% 
@@ -1927,7 +1968,8 @@ hchart(conflictos %>% mutate(gestion = lubridate::year(fecha)) %>%
     enabled = TRUE,
     text = "(enero 2010 - junio 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
-  ) -> hcbub_tipo_medida
+  ) %>% 
+  hc_legend(layout = "horizontal") -> hcbub_tipo_medida
 
 
 #-----------

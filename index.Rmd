@@ -17,9 +17,18 @@ knitr::opts_chunk$set(echo = TRUE)
 source("codigo/graficos_generales.R")
 Sys.setlocale(locale = "es_ES.UTF-8")
 ```
-
 <br>
 <br>
+<br>
+<br>
+<center><h1>CONFLICTOS SOCIALES POR AÑO</center></h1>
+<br>
+<br>
+<small><center>Pase el mouse sobre cualquier día para conocer mayores detalles</center></small>
+<br>
+```{r, include=T, echo = F, cache.lazy = T}
+n_conflictos
+```
 <br>
 <br>
 <center><h1>CONFLICTOS SOCIALES POR DÍA</center></h1>
@@ -34,40 +43,18 @@ años_juntos
 <br>
 <center><h1>PROMEDIO DE CONFLICTOS POR DÍA Y AÑO</h1></center>
 <br>
-```{r, include=T, echo = F}
+```{r, include=T, echo = F, fig.align='center'}
 calendario
 ```
 <br>
 <br>
-<center><h1>AMENAZAS DE PRESIÓN</h1></center>
-<br>
-<center><small>Los demandantes anuncian medidas de presión antes de acudir a medidas más radicales. Aquí las más usadas. Pase el mouse sobre el gráfico para mayores detalles. Desactive y active las categorías de la leyenda haciendo click sobre ellas</small></center>
-<br>
-```{r, include=T, echo = F, cache.lazy = T}
-medidas_presion_1
-```
-<br>
-<center><h1>5 PRINCIPALES MEDIDAS DE PRESIÓN</h1></center>
-<br>
-<center><small>Entre 2010 y 2020 los demandantes utilizaron 21 diferentes medidas de presión. Se muestra aquí las 5 más utilizadas. Pase el mouse sobre el gráfico para mayores detalles. Desactive y active las categorías de la leyenda haciendo click sobre ellas</small></center>
-<br>
-```{r, include=T, echo = F, cache.lazy = T}
-medidas_presion
-```
 <br>
 <img src="img/complementaria_1.svg" >
 <br>
-<center><h1>SALIDAS A LOS CONFLICTOS</h1></center>
 <br>
-<center><small>¿Cómo concluyen los conflictos?, ¿Siguen vigentes?</small></center>
 <br>
-```{r, include=T, echo = F, cache.lazy = T}
-salidas
-```
-<br>
-
 <center><h1>CAUSAS DE LOS CONFLICTOS</h1></center>
-
+<br>
 <center><small>12.928 conflictos,  16 razones. Las razones están ordenadas de mayor a menor. Pase el mouse sobre el gráfico para mayores detalles. Desactive y active las categorías de la leyenda haciendo click sobre ellas</small></center>
 <br>
 <br>
@@ -86,9 +73,6 @@ tree_map_1
 ```
 <br>
 <br>
-<img src="img/complementaria_2.svg" >
-<br>
-<br>
 <center><h1>¿QUIÉNES SON LOS DEMANDADOS?</h1></center>
 <br>
 <center><small>33 instituciones/sectores demandados. Las áreas muestran la proporción de los sectores demandados respecto al total. Los datos están en porcentaje. En muchos casos los sectores tienen "subsectores". Para saber este nivel de detalle, haga click sobre el sector del cual desea tener mayor información</small></center>
@@ -97,14 +81,18 @@ tree_map_1
 ```{r, include=T, echo = F, cache.lazy = T}
 tree_map_3
 ```
-
+<br>
+<br>
+<br>
+<img src="img/complementaria_2.svg" >
+<br>
 <br>
 <br>
 <center><h1>¿DÓNDE OCURREN LOS CONFLICTOS?</h1></center>
 <br>
 </small><center>Sobre un total de 339 municipios. Los mapas muestran donde si y donde no ocurren los conflictos por año. En un siguiente mapa se podrá observar la intensidad de los conflictos.</center></small>
 <br>
-```{r, include=T, echo = F, cache.lazy = T}
+```{r, include=T, echo = F, fig.width = 15, fig.height=15}
 mapa_donde
 ```
 <br>
@@ -117,20 +105,77 @@ mapa_motion
 ```
 <br>
 <br>
-<img src="img/complementaria_3.svg" >
+<center><h1>ESCALA TERRITORIAL DE LOS CONFLICTOS</h1></center>
+<br>
+<center><small> Pase el mouse sobre los ámbitos para ver la distribución de conflictos por cada ámbito</small></center>
 <br>
 <br>
-<center><h1>¿CUÁL ES LA RELACIÓN ENTRE EL QUE DEMANDA Y EL DEMANDADO?</h1></center>
-<br>
-<center><small>12.292 conflictos entre 43 sectores. Cada color representa un sector y las curvas conectan sectores que tuvieron algún conflicto, ess decir al demandado con el demandante. El ancho de las conexiones muestra la cantidad de conflictos entre estos dos sectores. Pase el mouse sobre los sectores y sobre las conexiones para mayores detalles.</small></center>
-<br>
-<br>
-```{r, include=T, echo = F, cache.lazy = T}
-dependency
+```{r, include=T, echo = F,  fig.align = "center"}
+pie_ambito_total
 ```
 <br>
 <br>
-
+```{r, include=T, echo = F,  fig.align = "center"}
+facet_ambito_pie %>%
+ map(hc_size, height = 300) %>%
+  {print(hw_grid(.)); .} %>%
+  map(tags$div, class = "col-sm-4") %>%
+  tags$div(class = "row")
+```
+<br>
+<br>
+<center><h1>IMPACTO TERRITORIAL DE LOS CONFLICTOS</h1></center>
+<br>
+<br>
+<center><small>Los conflictos varían en su ocupación del territorio.Algunos pueden ser locales o vecinales, mientras otros pueden alcanzar incluso ámbitos internacionales. En 11 años los conflictos se distribuyen en 7 diferentes tipos de alcance. Pase el mouse sobre los alcances para ver la distribución de conflictos por cada alcance</small></center>
+<br>
+<br>
+```{r, include=T, echo = F,  fig.align = "center"}
+pie_alcance_total
+```
+<br>
+<br>
+```{r, include=T, echo = F,  fig.align = "center"}
+facet_alcance_pie %>%
+ map(hc_size, height = 300) %>%
+  {print(hw_grid(.)); .} %>%
+  map(tags$div, class = "col-sm-4") %>%
+  tags$div(class = "row")
+```
+<br>
+<br>
+<br>
+<img src="img/complementaria_3.svg" >
+<br>
+<br>
+<br>
+<center><h1>AMENAZAS DE PRESIÓN</h1></center>
+<br>
+<center><small>Los demandantes anuncian medidas de presión antes de acudir a medidas más radicales. Aquí las más usadas. Pase el mouse sobre el gráfico para mayores detalles. Desactive y active las categorías de la leyenda haciendo click sobre ellas</small></center>
+<br>
+```{r, include=T, echo = F, cache.lazy = T}
+medidas_presion_1
+```
+<br>
+<br>
+<center><h1>5 PRINCIPALES MEDIDAS DE PRESIÓN</h1></center>
+<br>
+<center><small>Entre 2010 y 2020 los demandantes utilizaron 21 diferentes medidas de presión. Se muestra aquí las 5 más utilizadas. Pase el mouse sobre el gráfico para mayores detalles. Desactive y active las categorías de la leyenda haciendo click sobre ellas</small></center>
+<br>
+```{r, include=T, echo = F, cache.lazy = T}
+medidas_presion
+```
+<br>
+<br>
+<center><h1>SALIDAS A LOS CONFLICTOS</h1></center>
+<br>
+<center><small>¿Cómo concluyen los conflictos?, ¿Siguen vigentes?</small></center>
+<br>
+```{r, include=T, echo = F, cache.lazy = T}
+salidas
+```
+<br>
+<br>
 <center><h1>¿CUÁL ES LA INTENSIDAD DE LOS CONFLICTOS POR AÑO?</h1></center>
 <br>
 <center><small>Los conflictos escalan en este orden: Conflictos latentes, manifiestos, confrontación, enfrentamiento violento  y cris de gobernabilidad. Véa esta evolución en frecuencias por año y porcentajes. Puede desactivar/activar cada uno de los años presionando el año en la leyenda.</small></center>
@@ -150,26 +195,69 @@ hbr_gestion_nivel
 hbr_gestion_nivel_perc
 ```
 
-<br>
-
-## {-}
-
-
-
+### Por intensiadd
 <br>
 <center><small> Presione sobre las barras correspondiente a cada nivel de conflictos para ver como se distribuyen los conflictos anualmente</small></center>
-<br>
-<br>
 
 ```{r, include=T, echo = F,  fig.align = "center"}
 nivel_drill
 ```
+
+## {-}
+
+<br>
 <br>
 <br>
 <img src="img/complementaria_4.svg" >
 <br>
 <br>
+<br>
+<center><h1>DEMANDAS POR AÑO</h1></center>
+<br>
+<br>
+<center><small> Las ondas representan año la intensidad de demandas por años. Pasa el cursor por las burbujas para ver la cantidad de tipos de demandas en cada año.</small></center>
+<br>
+<br>
 
+```{r, include=T, echo = F,  fig.align = "center"}
+rio_tipo
+```
+
+<br>
+<br>
+<center><h1>SECTORES MOVILIZADOS EN EL TIEMPO</h1></center>
+<br>
+<center><small> Las áreas muestran la proporción de los demandantes respecto al total. Presiona cada área para ver como se distribuyen los conflictos anualmente</small></center>
+<br>
+<br>
+
+```{r, include=T, echo = F,  fig.align = "center"}
+tree_map_demandante_year
+```
+<br>
+<br>
+<center><h1>SECTORES DEMANDADOS EN EL TIEMPO</h1></center>
+<br>
+<center><small> Las áreas muestran la proporción de los sectores demandados respecto al total. Presiona cada área para ver como se distribuyen sectores demandados anualmente</small></center>
+<br>
+<br>
+
+```{r, include=T, echo = F,  fig.align = "center"}
+tree_map_demandado_year
+```
+<br>
+<br>
+<center><h1>SECTORES DEMANDANTES POR DEPARTAMENTO</h1></center>
+<br>
+<center><small>43 sectores demandantes en 9 diferentes departamentos. Las burbujas representan a cada uno de los nueve departamentos. Dentro de cada departamento, cada burbuja representa a los secotres demandantes. Pasa el cursor por las burbujas para ver la cantidad de demandas de cada sector en cada departamento.</small></center>
+<br>
+<br>
+
+```{r, include=T, echo = F,  fig.align = "center"}
+hc_pa_bub
+```
+<br>
+<br>
 <center><h1>¿CUÁL ES EL NIVEL DE CONFLICTIVIDAD DE LOS  DEMANDANTES</h1></center>
 <br>
 
@@ -195,109 +283,18 @@ hbr_sector_nivel
 hbr_sector_nivel_perc
 ```
 
-<br>
+
 
 ## {-}
 
 <br>
-
-<center><h1>ESCALA TERRITORIAL DE LOS CONFLICTOS</h1></center>
-
-<br>
-<center><small> Pase el mouse sobre los ámbitos para ver la distribución de conflictos por cada ámbito</small></center>
 <br>
 <br>
-
-```{r, include=T, echo = F,  fig.align = "center"}
-pie_ambito_total
-```
-
+<img src="img/complementaria_5.svg" >
 <br>
 <br>
 <br>
 
-```{r, include=T, echo = F,  fig.align = "center"}
-facet_ambito_pie %>%
- map(hc_size, height = 300) %>%
-  {print(hw_grid(.)); .} %>%
-  map(tags$div, class = "col-sm-4") %>%
-  tags$div(class = "row")
-```
-<br>
-<br>
-<center><h1>IMPACTO TERRITORIAL DE LOS CONFLICTOS</h1></center>
-<br>
-<br>
-<center><small>Los conflictos varían en su ocupación del territorio.Algunos pueden ser locales o vecinales, mientras otros pueden alcanzar incluso ámbitos internacionales. En 11 años los conflictos se distribuyen en 7 diferentes tipos de alcance. Pase el mouse sobre los alcances para ver la distribución de conflictos por cada alcance</small></center>
-<br>
-<br>
-
-```{r, include=T, echo = F,  fig.align = "center"}
-pie_alcance_total
-```
-
-<br>
-<br>
-<br>
-
-```{r, include=T, echo = F,  fig.align = "center"}
-facet_alcance_pie %>%
- map(hc_size, height = 300) %>%
-  {print(hw_grid(.)); .} %>%
-  map(tags$div, class = "col-sm-4") %>%
-  tags$div(class = "row")
-```
-
-<br>
-<br>
-<center><h1>SECTORES MOVILIZADOS EN EL TIEMPO</h1></center>
-<br>
-<center><small> Las áreas muestran la proporción de los demandantes respecto al total. Presiona cada área para ver como se distribuyen los conflictos anualmente</small></center>
-<br>
-<br>
-
-```{r, include=T, echo = F,  fig.align = "center"}
-tree_map_demandante_year
-```
-<br>
-<br>
-<center><h1>SECTORES DEMANDADOS EN EL TIEMPO</h1></center>
-<br>
-<center><small> Las áreas muestran la proporción de los sectores demandados respecto al total. Presiona cada área para ver como se distribuyen sectores demandados anualmente</small></center>
-<br>
-<br>
-
-```{r, include=T, echo = F,  fig.align = "center"}
-tree_map_demandado_year
-```
-
-<br>
-<br>
-<center><h1>SECTORES DEMANDANTES POR DEPARTAMENTO</h1></center>
-<br>
-<center><small>43 sectores demandantes en 9 diferentes departamentos. Las burbujas representan a cada uno de los nueve departamentos. Dentro de cada departamento, cada burbuja representa a los secotres demandantes. Pasa el cursor por las burbujas para ver la cantidad de demandas de cada sector en cada departamento.</small></center>
-<br>
-<br>
-
-```{r, include=T, echo = F,  fig.align = "center"}
-hc_pa_bub
-```
-
-<br>
-<br>
-<center><h1>DEMANDAS POR AÑO</h1></center>
-<br>
-<br>
-<center><small> Las ondas representan año la intensidad de demandas por años. Pasa el cursor por las burbujas para ver la cantidad de tipos de demandas en cada año.</small></center>
-<br>
-<br>
-
-```{r, include=T, echo = F,  fig.align = "center"}
-rio_tipo
-```
-
-<br>
-<br>
 <center><h1>CAUSA DEL CONFLICTO Y MEDIDA DE PRESIÓN</h1></center>
 <br>
 <br>
@@ -306,34 +303,41 @@ rio_tipo
 <br>
 <br>
 
-## {.tabset}
-
-### Opción observada
-
-```{r, include=T, echo = F,  fig.align = "center"}
-heat_tipo_med
-```
-<br>
-<br>
-
-### Alternativa 1
-
 ```{r, include=T, echo = F,  fig.align = "center"}
 hcbub_tipo_medida
 ```
-
+<br>
 <br>
 
-### Alternativa 2
-```{r, include=T, echo = F,  fig.align = "center"}
-tree_map_tipo_medida
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+<hr>
+
+<hr>
+
+<hr>
+
+<center><h1>GRAFICOS DESCARTADOS</h1></center>
+
+<center><h1>¿CUÁL ES LA RELACIÓN ENTRE EL QUE DEMANDA Y EL DEMANDADO?</h1></center>
+<br>
+<center><small>12.292 conflictos entre 43 sectores. Cada color representa un sector y las curvas conectan sectores que tuvieron algún conflicto, ess decir al demandado con el demandante. El ancho de las conexiones muestra la cantidad de conflictos entre estos dos sectores. Pase el mouse sobre los sectores y sobre las conexiones para mayores detalles.</small></center>
+<br>
+<br>
+```{r, include=T, echo = F, cache.lazy = T}
+dependency
 ```
 <br>
 <br>
-<img src="img/complementaria_5.svg" >
-<br>
-<br>
-<center><h1>DURACIÓN DE LOS CONFLICTOS POR LA CAUSA DEL MISMO</h1></center>
+
+
+<center><h1>DURACIÓN DE LOS CONFLICTOS POR LA CAUSA DE LOS MISMOS</h1></center>
 <br>
 <br>
 <center><small> El siguiente gráfico muestra el promedio de duración de los conflictos por la causa de los mismos. Al pasar el mouse por cada círculo podrá ver la duración máxima y mínima, en días, de cada conflicto.</small></center>
@@ -375,6 +379,11 @@ demandado_duracion
 ```{r, include=T, echo = F,  fig.align = "center"}
 hbr_sector_tipo
 ```
+
+
+
+
+
 
 
 

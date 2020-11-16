@@ -11,6 +11,6 @@ library(fontawesome)
 
 <footer><center>
 <img src = img/salida.svg>
-<h1>[`r fa("facebook-f", fill = "#4267B2")`](https://idatosabiertos.org/) [`r fa("twitter", fill = "#1DA1F2")`](https://idatosabiertos.org/) [`r fa("link", fill = "#E01F52")`](https://www.unirbolivia.org/) [`r fa("link", fill = "#D8B970")`](https://analisisdeconflictos.unirbolivia.org/)</h1></center> </h1></center>
+<h1>[`r fa("facebook-f", fill = "#4267B2")`](https://www.facebook.com/UNIRBolivia) [`r fa("twitter", fill = "#1DA1F2")`](https://twitter.com/UNIRBolivia) [`r fa("link", fill = "#E01F52")`](https://www.unirbolivia.org/) [`r fa("link", fill = "#D8B970")`](https://analisisdeconflictos.unirbolivia.org/)</h1></center> </h1></center>
 </footer>
 
