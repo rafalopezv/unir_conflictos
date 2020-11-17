@@ -1945,9 +1945,9 @@ hchart(conflictos %>% mutate(gestion = lubridate::year(fecha)) %>%
               "#B4B5BA")) %>%
   hc_plotOptions(packedbubble = list(
     minSize = 5,
-    maxSize = 100,
+    maxSize = 50,
     zMin = 0,
-    zMax = 5000,
+    zMax = 2500,
     layoutAlgorithm = list(
       gravitationalConstant = 0.01,
       splitSeries = T,

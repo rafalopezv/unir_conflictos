@@ -119,14 +119,7 @@ mapa_donde
 ```
 <br>
 <br>
-<!-- <center><small>En 10 años los conflictos suceden en 108 municipios (32% del total). Cada  burbuja representa al municipio donde se presenta el conflicto, su tamaño muestra el número de conflictos en ese año. El cuadrado blanco en la parte inferior izquierda se usa para activar y detener la animación. Pase el mouse sobre las burbujas para ver la cantidad de conflictos por año y municipio.</small></center> -->
-<!-- <br> -->
-<!-- <br> -->
-```{r, include=T, echo = F, cache.lazy = T}
-mapa_motion
-```
-<br>
-<br>
+
 <center><h1>8. Ámbito de surgimiento de los conflictos </h1></center>
 <br>
 <center><small> Coloque el cursor sobre los segmentos del gráfico para ver la distribución de conflictos según el ámbito de su surgimiento.</small></center>
@@ -353,8 +346,11 @@ Coloque el cursor sobre las burbujas para ver la cantidad de conflictos por muni
 </small></center>
 <br>
 <br>
-VERIFICAR GRAFICO
-<br><br>
+```{r, include=T, echo = F, cache.lazy = T}
+mapa_motion
+```
+<br>
+<br>
 
 <center><h1>23.	Tipos de conflicto y medidas de presión </h1></center>
 <br>
@@ -372,40 +368,8 @@ hcbub_tipo_medida
 ```
 <br>
 <br>
-<center><h1>24.	Radicalidad de los conflictos por año</h1></center>
-<br>
 
-<center><small> Los conflictos escalan en este orden: latencia, manifestación, confrontación, enfrentamiento violento y crisis de gobernabilidad. 
-
-Coloque el cursor sobre las barras para ver la distribución anual de los conflictos según su radicalidad.
-</small></center>
-<br>
-<br>
-
-## {.tabset}
-
-### Frecuencia
-
-```{r, echo = F}
-hbr_gestion_nivel
-```
-
-### Porcentajes
-
-```{r, echo = F}
-hbr_gestion_nivel_perc
-```
-
-### Por intensiadd
-<br>
-<center><small> Presione sobre las barras correspondiente a cada nivel de conflictos para ver como se distribuyen los conflictos anualmente</small></center>
-
-```{r, include=T, echo = F,  fig.align = "center"}
-nivel_drill
-```
-
-
-<center><h1>25.	Nivel de radicalidad por sector demandante</h1></center>
+<center><h1>24.	Nivel de radicalidad por sector demandante</h1></center>
 <br>
 
 <center><small> Coloque el cursor sobre los segmentos de las barras para ver la cantidad por nivel de cada demandante.  
