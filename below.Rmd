@@ -9,10 +9,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <br>
 <br>
-
+<div><left>
+  <img src="img/unir.png" heigth = 120 width = 120/>
+  <img src="img/suecia.jpg" heigth = 120 width = 120/>
+  </left>
+  
+</div>
+<br>
+<br>
 <center>
-<h1>PRIMERA PARTE</h1>
-<h2>Análisis de la conflictividad social en Bolivia</h2>
+<h2>ANALISIS DE LA CONFLICTIVIDAD SOCIAL EN BOLIVIA</h2>
 </center>
 <br>
 
@@ -26,12 +32,7 @@ El visualizador Conflictividad social: 10 años y + es resultado del trabajo que
 </small></b>
 <br>
 <br>
-<div><center>
-  <img src="img/unir.png" heigth = 120 width = 120/>
-  <img src="img/suecia.jpg" heigth = 120 width = 120/>
-  </center>
-  
-</div>
+
 
 ---
 
