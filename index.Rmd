@@ -122,7 +122,7 @@ tree_map_3
 <br>
 <small><center>Cantidad de conflictos por municipio y año.</center></small>
 <br>
-```{r, include=T, echo = F, fig.width = 17, fig.height = 17}
+```{r, include=T, echo = F, fig.width = 9, fig.height = 17}
 mapa_donde
 ```
 <br>
@@ -340,6 +340,8 @@ demandante_duracion
 <br>
 <center><small> Promedio de duración de los conflictos de acuerdo al sector demandando. 
 
+<br>
+
 Coloque el cursor sobre cada círculo para ver la duración máxima y mínima, en días, de cada conflicto.
 </small></center>
 <br>
@@ -365,7 +367,11 @@ hc_pa_bub
 <br>
 <center><small>Interrelación conflictiva entre 43 sectores. 
 
+<br>
+
 Cada color representa un sector (demandante y demandado) y las líneas los conectan entre sí. El ancho de las conexiones muestra la cantidad de conflictos entre dos sectores. 
+
+<br>
 
 Coloque el cursor sobre los sectores y sobre las conexiones para mayores detalles.
 </small></center>
@@ -381,8 +387,12 @@ dependency
 <br>
 <center><small>108 municipios con conflictos sociales. 
 
+<br>
+
 Cada burbuja representa un municipio con conflictos, su tamaño es acorde a la cantidad de conflictos. 
 La línea en la parte inferior izquierda permite activar el año. 
+
+<br>
 
 Coloque el cursor sobre las burbujas para ver la cantidad de conflictos por municipio y año. 
 
@@ -402,6 +412,8 @@ mapa_motion
 <center><small>
 16 tipos de conflicto y 30 mil eventos (en los que se aplicaron algunos de los 25 tipos de medidas de presión existentes). 
 
+<br>
+
 Coloque el cursor sobre el gráfico para revisar la cantidad de eventos por tipo de conflicto.
 </small></center>
 <br>
@@ -418,7 +430,11 @@ hcbub_tipo_medida
 
 <center><small> Coloque el cursor sobre los segmentos de las barras para ver la cantidad por nivel de cada demandante.  
 
+<br>
+
 Mientras más espacio ocupe un color mayor es la radicalidad del sector demandante. Active/desactive los niveles presionando en la leyenda.
+
+<br>
 
 Coloque el cursor sobre los segmentos de las barras para ver el nivel de radicalidad según demandante.
 
