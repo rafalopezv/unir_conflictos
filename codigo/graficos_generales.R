@@ -1128,6 +1128,83 @@ hchart(
   ) -> tree_map_demandante_year
 
 
+# Alternativa tree tooltip
+
+conflictos <- df %>% 
+  mutate(year = lubridate::year(fecha))
+
+conflictos %>% filter(year>2009) %>% 
+  count(sector_a, year) %>% 
+  mutate(
+    porcentaje = prop.table(n)*100,
+    porcentaje = round(porcentaje, 3)
+  ) %>% 
+  mutate_if(is.character, replace_na, "Sin clasficación") %>% 
+  rename(value = n) %>% 
+  arrange(sector_a, desc(value))-> temp
+
+
+temp1 <- temp %>% group_by(sector_a) %>% 
+  mutate(total_perc = sum(porcentaje),
+         total_value = sum(value)) %>% 
+  ungroup() %>%
+  mutate(perc_sec = round((value/total_value)*100,2),
+         total_perc = round(total_perc,2)) %>% 
+  select(-value, - porcentaje, -total_value) %>% 
+  spread(year, perc_sec) %>% 
+  arrange(desc(total_perc))
+
+temp1[is.na(temp1)] <- 0
+
+
+hchart(temp1, hcaes(x = sector_a, value = total_perc, color = total_perc),
+       type = "treemap", borderWidth = 1/10, borderColor = "white") %>%   
+  # tooltip = list(valueDecimals = 2),
+  hc_plotOptions(
+    treemap = list(
+      dataLabels = list(
+        enabled = T,
+        align = "left",
+        verticalAlign = "top",
+        style = list(fontSize = "13px", textOutline = FALSE, color = "black")
+      )
+    )
+  ) %>% 
+  # hc_colors(c(col)) %>%
+  hc_tooltip(enabled = T, valueDecimals = 2, borderWidth = 0.01, 
+             style = list(fontFamily = "Open Sans"), backgroundColor =  "white",
+             pointFormat=paste("<b>{point.sector_a}: </b>{point.total_perc}%, desde 2010 a 2020 <br>
+                               <b>Porcentajes anuales del sector: </b><br>
+                               <b>2010: </b>{point.2010} % <br>
+                               <b>2011: </b>{point.2011} % <br>
+                               <b>2012: </b>{point.2012} % <br>
+                               <b>2013: </b>{point.2013} % <br>
+                               <b>2014: </b>{point.2014} % <br>
+                               <b>2015: </b>{point.2015} % <br>
+                               <b>2016: </b>{point.2016} % <br>
+                               <b>2017: </b>{point.2017} % <br>
+                               <b>2018: </b>{point.2018} % <br>
+                               <b>2019: </b>{point.2019} % <br>
+                               <b>2020: </b>{point.2020} % <br>
+                               "),
+             headerFormat = "") %>% 
+  hc_colorAxis(stops = color_stops(colors = c("#264653","#2a9d8f","#e9c46a","#f4a261","#e76f51", "#e63946","#d90429", "#50514f", "#293241"))) %>%
+  # hc_colorAxis(stops = color_stops(colors = viridis::inferno(10))) %>% 
+  hc_chart(
+    style = list(fontFamily = "Open Sans")
+  ) %>% 
+  hc_tooltip(backgroundColor = "white", borderWidth = 0.001, valueSuffix = "%") %>% 
+  hc_size(height = 700) %>% 
+  hc_credits(
+    enabled = TRUE,
+    text = "(enero 2010 - junio 2020)",
+    style = list(fontFamily = "Open Sans", fontSize = 13)
+  ) %>% 
+  hc_legend(enabled = FALSE)  -> alternativa_tree_map_demandante_year
+
+
+
+
 
 
 ## ALTERNATIVA BARRAS
@@ -1345,6 +1422,85 @@ hchart(
     text = "(enero 2010 - junio 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) -> tree_map_demandado_year
+
+
+# alternativa treemap tooltip
+
+conflictos <- df %>% 
+  mutate(year = lubridate::year(fecha))
+
+conflictos %>% 
+  count(sector_b, year) %>% filter(year>2009) %>% 
+  mutate(
+    porcentaje = prop.table(n)*100,
+    porcentaje = round(porcentaje, 3)
+  ) %>% 
+  mutate_if(is.character, replace_na, "Sin clasficación") %>% 
+  rename(value = n) %>% 
+  arrange(sector_b, desc(value))-> temp
+
+
+
+temp1 <- temp %>% group_by(sector_b) %>% 
+  mutate(total_perc = sum(porcentaje),
+         total_value = sum(value)) %>% 
+  ungroup() %>%
+  mutate(perc_sec = round((value/total_value)*100,2),
+         total_perc = round(total_perc,2)) %>% 
+  select(-value, - porcentaje, -total_value) %>% 
+  spread(year, perc_sec) %>% 
+  arrange(desc(total_perc))
+
+temp1[is.na(temp1)] <- 0
+
+
+hchart(temp1, hcaes(x = sector_b, value = total_perc, color = total_perc),
+       type = "treemap", borderWidth = 1/10, borderColor = "white") %>%   
+  # tooltip = list(valueDecimals = 2),
+  hc_plotOptions(
+    treemap = list(
+      dataLabels = list(
+        enabled = T,
+        align = "left",
+        verticalAlign = "top",
+        style = list(fontSize = "13px", textOutline = FALSE, color = "black")
+      )
+    )
+  ) %>% 
+  # hc_colors(c(col)) %>%
+  hc_tooltip(enabled = T, valueDecimals = 2, borderWidth = 0.01, 
+             style = list(fontFamily = "Open Sans"), backgroundColor =  "white",
+             pointFormat=paste("<b>{point.sector_b}: </b>{point.total_perc}%, de 2010 a 2020<br>
+                               <b>Porcentajes anuales del sector: </b><br>
+                               <b>2010: </b>{point.2010} % <br>
+                               <b>2011: </b>{point.2011} % <br>
+                               <b>2012: </b>{point.2012} % <br>
+                               <b>2013: </b>{point.2013} % <br>
+                               <b>2014: </b>{point.2014} % <br>
+                               <b>2015: </b>{point.2015} % <br>
+                               <b>2016: </b>{point.2016} % <br>
+                               <b>2017: </b>{point.2017} % <br>
+                               <b>2018: </b>{point.2018} % <br>
+                               <b>2019: </b>{point.2019} % <br>
+                               <b>2020: </b>{point.2020} % <br>
+                               "),
+             headerFormat = "") %>% 
+  hc_colorAxis(stops = color_stops(colors = c("#2C6E49", "#E07A5F", "#3D405B", "#81B29A", "#63585F", 
+                                              "#B4B5BA", "#261F23", "#575D7C", "#9194C6", "#75184D"))) %>%
+  # hc_colorAxis(stops = color_stops(colors = viridis::inferno(10))) %>% 
+  hc_chart(
+    style = list(fontFamily = "Open Sans")
+  ) %>% 
+  hc_tooltip(backgroundColor = "white", borderWidth = 0.001, valueSuffix = "%") %>% 
+  hc_size(height = 700) %>% 
+  hc_credits(
+    enabled = TRUE,
+    text = "(enero 2010 - junio 2020)",
+    style = list(fontFamily = "Open Sans", fontSize = 13)
+  ) %>% 
+  hc_legend(enabled = FALSE)  -> alternativa_tree_map_demandado_year
+
+
 
 #---------
 #  packed bubble departamento sector demandante
@@ -2134,17 +2290,21 @@ temp <- conflictos %>% mutate(gestion = lubridate::year(fecha)) %>%
   mutate_if(is.numeric, replace_na, 0) %>% 
   gather(medida_de_presion, frecuencia, -tipo)
 
-unique(temp$tipo)
 
-hchart(conflictos %>% mutate(gestion = lubridate::year(fecha)) %>% 
-         filter(gestion >= 2010) %>% 
-         select(id, tipo, medida_de_presion) %>% 
-         group_by(tipo, medida_de_presion) %>% 
-         summarise(frecuencia = n()) %>% 
-         filter(tipo != "Otro") %>% 
-         spread(medida_de_presion, frecuencia) %>% 
-         mutate_if(is.numeric, replace_na, 0) %>% 
-         gather(medida_de_presion, frecuencia, -tipo),
+conflictos %>% mutate(gestion = lubridate::year(fecha)) %>% 
+  filter(gestion >= 2010) %>% 
+  select(id, tipo, medida_de_presion) %>% 
+  group_by(tipo, medida_de_presion) %>% 
+  summarise(frecuencia = n()) %>% 
+  filter(tipo != "Otro") %>% 
+  spread(medida_de_presion, frecuencia) %>% 
+  mutate_if(is.numeric, replace_na, 0) %>% 
+  gather(medida_de_presion, frecuencia, -tipo) %>% 
+  mutate(freq_1 = format(frecuencia, nsmall = 2, big.mark=".")) -> conflictos
+  
+  
+
+hchart(conflictos,
        "packedbubble",
        hcaes(name = medida_de_presion, value = frecuencia, group = tipo)) %>% 
   hc_colors(c("#E01F52", "#C6A659", "#06D6A0", "#466B77", "#073B4C", 
@@ -2165,11 +2325,11 @@ hchart(conflictos %>% mutate(gestion = lubridate::year(fecha)) %>%
     )
   )
   ) %>% 
-  hc_tooltip(enabled = T, valueDecimals = 2, borderWidth = 0.01, 
+  hc_tooltip(enabled = T, valueDecimals = 0, borderWidth = 0.01, 
              style = list(fontFamily = "Open Sans"), backgroundColor =  "white",
              pointFormat=paste("Tipo: <b>{point.tipo}</b><br>
                                Medida: <b>{point.medida_de_presion}</b><br>
-                               Total: <b>{point.frecuencia}</b>"),
+                               Total: <b>{point.freq_1}</b>"),
              headerFormat = "") %>% 
   hc_chart(style = list(fontFamily = "Open Sans")) %>% 
   hc_credits(

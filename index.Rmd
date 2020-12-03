@@ -297,35 +297,11 @@ tipo_duracion
 <br>
 
 ```{r, include=T, echo = F,  fig.align = "center"}
-tree_map_demandante_year
+alternativa_tree_map_demandante_year
 ```
 <br>
 <br>
 
-ALTERNATIVA GRAFICO
-
-
-## {.tabset}
-
-### Frecuencia
-
-```{r, include=T, echo = F,  fig.align = "center"}
-hbr_demandante_gestion
-```
-
-<br>
-<br>
-
-### Porcentaje
-
-## {-}
-
-<br>
-```{r, include=T, echo = F,  fig.align = "center"}
-hbr_demandante_gestion_perc
-```
-<br>
-<br>
 <!-- #17 -->
 <center><h1>Sectores demandados por año </h1></center>
 <br>
@@ -334,7 +310,7 @@ hbr_demandante_gestion_perc
 <br>
 
 ```{r, include=T, echo = F,  fig.align = "center"}
-tree_map_demandado_year
+alternativa_tree_map_demandado_year
 ```
 
 <br>
@@ -454,10 +430,6 @@ hcbub_tipo_medida
 <br>
 
 Mientras más espacio ocupe un color mayor es la radicalidad del sector demandante. Active/desactive los niveles presionando en la leyenda.
-
-<br>
-
-Coloque el cursor sobre los segmentos de las barras para ver el nivel de radicalidad según demandante.
 
 </small></center>
 <br>
