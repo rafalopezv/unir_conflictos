@@ -43,7 +43,7 @@ Coloque el cursor sobre cualquier día para conocer mayores detalles.
 </center></small>
 <br>
 ```{r, include=T, echo = F, cache.lazy = T}
-años_juntos
+gestiones_juntos
 ```
 <br>
 <br>
@@ -82,7 +82,7 @@ razones_conflicto
 <br>
 <center><small>
 
-33 sectores movilizados
+34 sectores movilizados
 
 Las áreas muestran la proporción (%) de los sectores movilizados respecto al total.
 
@@ -103,7 +103,7 @@ tree_map_1
 <br>
 <center><small>
 
-33 receptores de demandas
+32 receptores de demandas
 
 Las áreas muestran la proporción (%) de los sectores demandados respecto al total. 
 
@@ -192,7 +192,7 @@ medidas_presion_1
 ```
 <br>
 <br>
-<!-- #11 -->
+
 <center><h1>Medidas de presión </h1></center>
 <br>
 <center><small>
@@ -349,7 +349,7 @@ demandado_duracion
 <center><h1>Sectores demandantes por departamento </h1></center>
 <br>
 
-<center><small> 43 sectores demandantes en los nueve departamentos.
+<center><small> 35 sectores demandantes en los nueve departamentos.
 
 Coloque el cursor sobre las burbujas para ver la cantidad de conflictos por sector y departamento.
 </small></center>
@@ -362,7 +362,7 @@ hc_pa_bub
 <!-- #21 -->
 <center><h1>Relación entre demandantes y demandados</h1></center>
 <br>
-<center><small>Interrelación conflictiva entre 43 sectores. 
+<center><small>Interrelación conflictiva entre 35 sectores. 
 
 <br>
 

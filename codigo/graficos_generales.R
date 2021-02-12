@@ -15,17 +15,23 @@ colores_2  <- c("#262842", "#5BBF8F", "#BBEAD3", "#870845", "#222438", "#E07A5F"
 
 
 # frecuencia de confpcits por año
-df %>% 
+temp <- df %>% 
   mutate(
-    año = lubridate::year(fecha)
-  ) %>% select(id, año) %>% distinct() %>% 
-  group_by(año) %>% 
+    gestion = lubridate::year(fecha)
+  ) %>% select(id, gestion) %>% distinct() %>% 
+  group_by(gestion) %>% 
   count() %>% 
   mutate(
     n_aux = format(n, nsmall = 2, big.mark=".")
   ) %>% 
-  filter(año > 2009) %>% 
-  hchart("line", hcaes(x = año, y = n)) %>% 
+  filter(gestion > 2009)
+
+#cantidad conflictos
+# sum(temp$n)
+
+
+temp %>% 
+  hchart("line", hcaes(x = gestion, y = n)) %>% 
   hc_chart(style = list(fontFamily = "Open Sans")) %>% 
   hc_plotOptions(line = list(
     lineWidth = 5,
@@ -44,18 +50,19 @@ df %>%
   hc_xAxis(title = list(text = "Año")) %>% 
   hc_tooltip(enabled = T, borderWidth = 0.01, 
              style = list(fontFamily = "Open Sans"), backgroundColor =  "white",
-             pointFormat=paste("<b>Año: {point.año}</b><br>
+             pointFormat=paste("<b>Año: {point.gestion}</b><br>
                                <b>{point.n_aux}</b> conflictos<br>"),
              headerFormat = "") %>% 
   hc_credits(
     enabled = TRUE,
-    text = "enero 2010 - junio 2020",
+    text = "enero 2010 - diciembre 2020",
     style = list(fontFamily = "Open Sans", fontSize = 12)
   )  -> n_conflictos
   
     
 # razones conflicto
-df %>% 
+
+temp <- df %>% 
   select(id, tipo) %>% 
   unique() %>% 
   count(tipo) %>% 
@@ -67,7 +74,12 @@ df %>%
     n = format(n, nsmall = 2, big.mark="."),
     prop = format(prop, nsmall = 2, big.mark=".")
   ) %>% 
-  arrange(desc(x_100)) %>% 
+  arrange(desc(x_100))
+
+# cantidad tipos conflicto
+# unique(temp$tipo)
+
+temp %>% 
   hchart(
     "item", 
     hcaes(name = tipo, y = x_100),
@@ -84,35 +96,35 @@ df %>%
              headerFormat = "") %>% 
     hc_credits(
       enabled = TRUE,
-      text = "cada cuadrado representa a 10 conflictos (enero 2010 - junio 2020)",
+      text = "cada cuadrado representa a 10 conflictos (enero 2010 - diciembre 2020)",
       style = list(fontFamily = "Open Sans", fontSize = 13)
     ) %>% 
   hc_legend(layout = "horizontal") -> razones_conflicto
  
 # año conflicto
-año_2020 <- df %>% 
+gestion_2020 <- df %>% 
   arrange(desc(fecha)) %>% 
-  mutate(año = lubridate::yday(fecha)) %>% 
+  mutate(gestion = lubridate::yday(fecha)) %>% 
   slice(1) %>% 
-  pull(año)
+  pull(gestion)
 
 df %>% 
   mutate(
-    año = lubridate::year(fecha)
+    gestion = lubridate::year(fecha)
   ) %>% 
-  count(año) %>% 
-  filter(año > 2009) %>% 
+  count(gestion) %>% 
+  filter(gestion > 2009) %>% 
   mutate(
     dia = case_when(
-      año == 2020 ~ n/año_2020, 
+      gestion == 2020 ~ n/gestion_2020, 
       T ~ n/365
     ), 
     dia = case_when(
-      año == 2020 ~ round(dia, 1), 
+      gestion == 2020 ~ round(dia, 1), 
       T ~ round(dia, 0)
     ),  
     num = 1,
-    etiqueta = paste0("Año: ", año)
+    etiqueta = paste0("Año: ", gestion)
   ) %>% 
   ggplot(aes(as.character(num), dia)) + 
   geom_text(aes(x = 1, y = 5.5, label = dia), family = "Open Sans ExtraBold",
@@ -132,6 +144,8 @@ df %>%
     panel.grid.minor =  element_blank()
   ) -> calendario
 
+
+## calendario anual por día
 # días sin conflicto
 fechas <- df %>% 
   select(fecha) %>% 
@@ -150,40 +164,40 @@ temp_fechas %>%
   bind_rows(fechas, .) %>% 
   filter(fecha > "2009-12-31") %>% 
   mutate(
-    año = lubridate::year(fecha),
+    gestion = lubridate::year(fecha),
     dia = lubridate::wday(fecha, label = TRUE),
     dia_literal = lubridate::wday(fecha, abbr = F),
     mes = lubridate::month(fecha, label = TRUE, abbr = F),
     semana = lubridate::week(fecha)
   ) %>% 
   ungroup() %>% 
-  group_split(año, mes) %>% 
+  group_split(gestion, mes) %>% 
   map(., ~arrange(., fecha)) %>% 
   map(., ~mutate(., dia_mes = 1:nrow(.))) %>% 
   bind_rows() %>% 
   mutate(
     n = replace_na(n, 0), 
     eje_x = paste0(mes, " ", dia_mes),
-    etiqueta = paste0(dia_mes, " de ", mes, " de ", año)
+    etiqueta = paste0(dia_mes, " de ", mes, " de ", gestion)
   ) -> fechas
 
 fechas %>% 
   ungroup() %>% 
-  group_split(año) %>% 
+  group_split(gestion) %>% 
   map(., ~arrange(., fecha)) %>% 
   map(., ~mutate(., num = 1:nrow(.))) %>% 
   bind_rows() -> temp_fechas
 
 # eje x con 366 días (bisiesto)
 which(temp_fechas %>% 
-        group_split(año) %>% 
+        group_split(gestion) %>% 
         map(., "eje_x") %>% 
         map(., length) %>% 
         unlist() == 366) %>% 
   first()
 
 eje_x <- temp_fechas %>% 
-  group_split(año) %>% 
+  group_split(gestion) %>% 
   map(., "eje_x")
 
 eje_x <- eje_x[[3]]
@@ -194,14 +208,14 @@ hchart(
   "heatmap", 
   hcaes(
     x = num,
-    y = año, 
+    y = gestion, 
     value = n
   )
 )  %>% 
   hc_colorAxis(
     stops = color_stops(4, c("#222438", "#E07A5F", "#F2CC8F", "#BBEAD3"))
   ) %>% 
-  hc_yAxis(mayorGridLineWidth = 0, gridLineColor = "white") %>% 
+  hc_yAxis(mayorGridLineWidth = 0, gridLineColor = "white", title = list(text = "año")) %>% 
   hc_xAxis(minorGridLineWidth = 5, categories = eje_x, gridLineColor = "black", 
            title = list(text = NULL), ceiling = 365) %>% 
   hc_chart(backgroundColor="white", borderColor = "transparent", 
@@ -211,7 +225,7 @@ hchart(
              pointFormat=paste("<b>{point.etiqueta}</b><br>
                                <b>{point.n}</b> conflictos<br>"),
              headerFormat = "") %>% 
-  hc_size(height = 800) -> años_juntos
+  hc_size(height = 800) -> gestiones_juntos
 
 #-----------------------------
 # treemap
@@ -300,6 +314,9 @@ lvl_opts <-  list(
 
 cols <- temp %>% pull(color) %>% unique
 
+#sectores movilizados
+# unique(temp$sector_a)
+
 hchart(
   data_to_hierarchical(temp, c(sector_a, sub_sector_a), porcentaje, colors = cols),
   type = "treemap",
@@ -318,7 +335,7 @@ hchart(
   hc_tooltip(backgroundColor =  "white", borderWidth =  0.001, valueSuffix = "%") %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) -> tree_map_1
 
@@ -403,6 +420,9 @@ lvl_opts <-  list(
 
 cols <- temp %>% pull(color) %>% unique
 
+#cnatidad receptores
+unique(temp$sector_b)
+
 hchart(
   data_to_hierarchical(temp, c(sector_b, sub_sector_b), porcentaje, colors = cols),
   type = "treemap",
@@ -421,7 +441,7 @@ hchart(
   hc_size(height = 700) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) -> tree_map_3
 
@@ -429,17 +449,17 @@ hchart(
 # donde conflictos
 #----------------------
 df %>% 
-  mutate(año = lubridate::year(fecha)) %>% 
-  group_by(año, departamento, localidad_o_municipio, codigo) %>% 
+  mutate(gestion = lubridate::year(fecha)) %>% 
+  group_by(gestion, departamento, localidad_o_municipio, codigo) %>% 
   count() %>% 
-  filter(año > 2009) %>% 
+  filter(gestion > 2009) %>% 
   ungroup() %>% 
-  group_split(año) %>% 
+  group_split(gestion) %>% 
   map(., ~mutate(., prop = prop.table(n)*100)) %>% 
   bind_rows() %>% 
   rename(CODIGO = codigo) %>%
   filter(!is.na(CODIGO)) %>% 
-  group_split(año) -> temp
+  group_split(gestion) -> temp
 
 mapa <- sf::st_read("input/municipios.339.geojson")
 mapas <- list()
@@ -456,15 +476,15 @@ for(i in 1:length(temp)) {
         T ~ 1
       )
     ) %>% 
-    fill(año) -> mapas[[i]]
+    fill(gestion) -> mapas[[i]]
   
 }
 
 mapas %<>% 
   bind_rows(.) %>% 
-  group_by(año) %>% 
+  group_by(gestion) %>% 
   mutate(key_2 = sum(key_1)) %>% 
-  mutate(etiqueta = paste0(año, "\n", key_2, " municipios con conflictos"))
+  mutate(etiqueta = paste0(gestion, "\n", key_2, " municipios con conflictos"))
 
 ggplot(mapas) +
   geom_sf(aes(fill = key), color = "white", size = 0.009) + 
@@ -478,18 +498,18 @@ ggplot(mapas) +
 #-----------------
 lat_lon <- read_csv("input/lat_lon_339_cent.csv") %>% select(CODIGO, name = MUNICIPIO, lat, lon)
 df %>% 
-  mutate(año = lubridate::year(fecha)) %>% 
-  group_by(año, departamento, localidad_o_municipio, codigo) %>% 
+  mutate(gestion = lubridate::year(fecha)) %>% 
+  group_by(gestion, departamento, localidad_o_municipio, codigo) %>% 
   count() %>% 
-  filter(año > 2009) %>% 
+  filter(gestion > 2009) %>% 
   ungroup() %>% 
   rename(CODIGO = codigo) %>%
   filter(!is.na(CODIGO)) %>% 
-  group_by(CODIGO, año) %>% 
+  group_by(CODIGO, gestion) %>% 
   summarise(z = sum(n)) %>% 
-  spread(año, z) %>% 
-  gather(año, value, -CODIGO) %>% 
-  select(-año) %>% 
+  spread(gestion, z) %>% 
+  gather(gestion, value, -CODIGO) %>% 
+  select(-gestion) %>% 
   group_by(CODIGO) %>% 
   nest() -> temp
 
@@ -499,6 +519,7 @@ temp %<>%
   select(-data) %>% 
   left_join(., lat_lon) 
 
+unique(temp$name)
 
 hcmap(
   "countries/bo/bo-all",
@@ -581,7 +602,7 @@ dependency <- highchart() %>%
   ) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   )
 
@@ -630,7 +651,7 @@ hchart(temp, "column", hcaes(year, cantidad, group = nivel_1)) %>%
   hc_yAxis(title = list(text = "Frecuencia")) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junioo 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) -> hbr_gestion_nivel
   
@@ -701,7 +722,7 @@ hbr_gestion_nivel_perc <- hbr_yn %>%
            max = 100) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   )
 
@@ -780,7 +801,7 @@ hbr_sector_nivel <- hbr_sn %>%
   hc_size(height = 1200) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   )
 
@@ -859,7 +880,7 @@ hbr_sector_nivel_perc <- hbr_sn %>%
   hc_size(height = 1200) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   )
 
@@ -901,7 +922,7 @@ pie_alcance_total <- df1 %>%
     hc_chart(style = list(fontFamily = "Open Sans")) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   )
 
@@ -957,6 +978,13 @@ create_hc <- function(t) {
 facet_alcance_pie <- c(2:12) %>%
   map(create_hc)
 
+facet_alcance_pie %>%
+  map(hc_size, height = 300) %>%
+  {print(hw_grid(.)); .} %>%
+  map(tags$div, class = "col-sm-4") %>%
+  tags$div(class = "row")
+
+
 
 #-----
 # Torta AMBITO
@@ -994,7 +1022,7 @@ pie_ambito_total <- df1 %>%
   hc_chart(style = list(fontFamily = "Open Sans")) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   )
 
@@ -1123,7 +1151,7 @@ hchart(
   hc_size(height = 700) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) -> tree_map_demandante_year
 
@@ -1197,7 +1225,7 @@ hchart(temp1, hcaes(x = sector_a, value = total_perc, color = total_perc),
   hc_size(height = 700) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) %>% 
   hc_legend(enabled = FALSE)  -> alternativa_tree_map_demandante_year
@@ -1269,7 +1297,7 @@ hbr_demandante_gestion <- hbr_sn %>%
   hc_size(height = 1200) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   )
 
@@ -1334,7 +1362,7 @@ hbr_demandante_gestion_perc <- hbr_sn %>%
   hc_size(height = 1200) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   )
 
@@ -1419,7 +1447,7 @@ hchart(
   hc_size(height = 700) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) -> tree_map_demandado_year
 
@@ -1495,7 +1523,7 @@ hchart(temp1, hcaes(x = sector_b, value = total_perc, color = total_perc),
   hc_size(height = 700) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) %>% 
   hc_legend(enabled = FALSE)  -> alternativa_tree_map_demandado_year
@@ -1505,8 +1533,13 @@ hchart(temp1, hcaes(x = sector_b, value = total_perc, color = total_perc),
 #---------
 #  packed bubble departamento sector demandante
 #--------
+
+
 conflictos <- df %>% 
   mutate(year = lubridate::year(fecha))
+
+# sectores demandantes
+unique(c(unique(df$sector_a), unique(df$sector_b)))
 
 hchart(conflictos %>% select(id, departamento, sector_a) %>% 
                       distinct() %>% 
@@ -1540,7 +1573,7 @@ hchart(conflictos %>% select(id, departamento, sector_a) %>%
   hc_chart(style = list(fontFamily = "Open Sans")) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) -> hc_pa_bub
 
@@ -1587,7 +1620,7 @@ hchart(conflictos %>% mutate(gestion = lubridate::year(fecha)) %>%
   hc_chart(style = list(fontFamily = "Open Sans")) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) -> hc_pa_bub2
 
@@ -1633,7 +1666,7 @@ hchart(temp, "streamgraph", hcaes(gestion, frecuencia, group = tipo),
   hc_colors(colors = col[1:17]) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) %>% 
   hc_legend(layout = "vertical") -> rio_tipo
@@ -1686,7 +1719,7 @@ hchart(temp,
   hc_size(height = 800) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) -> heat_tipo_med
 
@@ -1694,6 +1727,10 @@ hchart(temp,
 #-------------------------
 # medida de presión
 #-------------------------
+
+#total medidas de presion
+# unique(df$medida_de_presion)
+
 df %>% 
   mutate(
     medida_de_presion = str_replace(medida_de_presion, "Bloqueo de calles y avenidas", "Bloqueo de calles, avenidas o carretereas"),
@@ -1719,6 +1756,8 @@ df %>%
 
 colores <- c("#264653","#2a9d8f","#e9c46a","#f4a261","#e76f51")
 
+
+
 temp %>% 
   hchart(
     "item", 
@@ -1736,13 +1775,14 @@ temp %>%
              headerFormat = "") %>% 
   hc_credits(
     enabled = TRUE,
-    text = "cada círculo representa a 10 medidas de presión (enero 2010 - junio 2020)",
+    text = "cada círculo representa a 10 medidas de presión (enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) %>% 
   hc_legend(layout = "horizontal") -> medidas_presion
 
 
 # medida de presion sleccionadas
+
 df %>% 
   mutate(
     medida_de_presion = str_replace(medida_de_presion, "Bloqueo de calles y avenidas", "Bloqueo de calles, avenidas o carretereas"),
@@ -1765,28 +1805,27 @@ df %>%
 
 colores <- c("#264653", "#f4a261","#e76f51")
 
-temp %>% 
+temp %>%
   hchart(
-    "item", 
+    "item",
     hcaes(name = medida_de_presion, y = n_1),
     marker = list(symbol = "square"),
     showInLegend = TRUE
-  ) %>% 
-  hc_colors(colors = col) %>% 
-  hc_chart(style = list(fontFamily = "Open Sans")) %>% 
-  hc_tooltip(enabled = T, valueDecimals = 2, borderWidth = 0.001, 
+  ) %>%
+  hc_colors(colors = col) %>%
+  hc_chart(style = list(fontFamily = "Open Sans")) %>%
+  hc_tooltip(enabled = T, valueDecimals = 2, borderWidth = 0.001,
              style = list(fontFamily = "Open Sans"), backgroundColor =  "white",
              pointFormat =paste("<b>{point.medida_de_presion}</b><br>
                                Medida usada <b>{point.n}</b> veces<br>
                                <b>{point.prop} %</b> sobre el total<br>"),
-             headerFormat = "") %>% 
+             headerFormat = "") %>%
   hc_credits(
     enabled = TRUE,
-    text = "cada cuadrado representa a 10 medidas de presión (enero 2010 - junio 2020)",
+    text = "cada cuadrado representa a 10 medidas de presión (enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
-  ) %>% 
+  ) %>%
   hc_legend(layout = "horizontal") -> medidas_presion_1
-
 
 
 #-------------------------
@@ -1817,7 +1856,7 @@ hchart(temp, "column", hcaes(x = salida, y = prop, color = salida)) %>%
              headerFormat = "") %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) %>% 
   hc_chart(style = list(fontFamily = "Open Sans")) %>% 
@@ -1910,7 +1949,7 @@ hchart(temp, "column", hcaes(x = salida, y = prop, color = salida)) %>%
 #   hc_tooltip(backgroundColor = "white", borderWidth = 0.001) %>% 
 #   hc_credits(
 #     enabled = TRUE,
-#     text = "(enero 2010 - junio 2020)",
+#     text = "(enero 2010 - diciembre 2020)",
 #     style = list(fontFamily = "Open Sans", fontSize = 13)
 #   ) -> salidas
 
@@ -1970,7 +2009,7 @@ highchart() %>%
   hc_chart(inverted = TRUE, style = list(fontFamily = "Open Sans")) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)) %>% 
   hc_size(height = 800) -> tipo_duracion
 
@@ -2030,7 +2069,7 @@ highchart() %>%
   hc_chart(inverted = TRUE, style = list(fontFamily = "Open Sans")) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)) %>% 
   hc_size(height = 800) -> demandante_duracion
 
@@ -2089,7 +2128,7 @@ highchart() %>%
   hc_chart(inverted = TRUE, style = list(fontFamily = "Open Sans")) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)) %>% 
   hc_size(height = 800) -> demandado_duracion
 
@@ -2187,7 +2226,7 @@ nivel_drill <- hchart(
   hc_chart(style = list(fontFamily = "Open Sans")) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   )
 
@@ -2269,7 +2308,7 @@ hbr_sector_tipo <- hbr_sn %>%
   hc_size(height = 1200) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   )
 
@@ -2301,8 +2340,11 @@ conflictos %>% mutate(gestion = lubridate::year(fecha)) %>%
   mutate_if(is.numeric, replace_na, 0) %>% 
   gather(medida_de_presion, frecuencia, -tipo) %>% 
   mutate(freq_1 = format(frecuencia, nsmall = 2, big.mark=".")) -> conflictos
-  
-  
+
+# #cantidad de tipos  
+# unique(conflictos$tipo)  
+# # cantidad medidas
+# unique(conflictos$medida_de_presion)
 
 hchart(conflictos,
        "packedbubble",
@@ -2334,7 +2376,7 @@ hchart(conflictos,
   hc_chart(style = list(fontFamily = "Open Sans")) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Open Sans", fontSize = 13)
   ) %>% 
   hc_legend(layout = "horizontal") -> hcbub_tipo_medida
@@ -2426,6 +2468,6 @@ hchart(
   hc_size(height = 700) %>% 
   hc_credits(
     enabled = TRUE,
-    text = "(enero 2010 - junio 2020)",
+    text = "(enero 2010 - diciembre 2020)",
     style = list(fontFamily = "Oswald", fontSize = 13)
   ) -> tree_map_tipo_medida
