@@ -225,7 +225,11 @@ hchart(
              pointFormat=paste("<b>{point.etiqueta}</b><br>
                                <b>{point.n}</b> conflictos<br>"),
              headerFormat = "") %>% 
-  hc_size(height = 800) -> gestiones_juntos
+  hc_size(height = 800) %>% 
+  hc_caption(
+    text = "enero 2010 - diciembre 2020",
+    style = list(fontFamily = "Open Sans", fontSize = 13)
+  ) -> gestiones_juntos
 
 #-----------------------------
 # treemap

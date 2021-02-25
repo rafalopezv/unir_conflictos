@@ -22,7 +22,7 @@ Sys.setlocale(locale = "es_ES.UTF-8")
 <br>
 <br>
 <!-- #1 -->
-<center><h1>Cantidad de conflictos por año</center></h1>
+<center><h1>Cantidad de conflictos por año (enero 2010 - diciembre 2020)</center></h1>
 <br>
 <br>
 <small><center>12.928 conflictos en 10 años y +</center></small>
@@ -64,7 +64,7 @@ calendario
 <center><h1>Tipología de los conflictos </h1></center>
 <br>
 <center><small>
-16 tipos de conflicto según demanda
+16 tipos de conflicto según demanda.
 
 Coloque el cursor sobre el gráfico para obtener mayores detalles. 
 Desactive y active las categorías de la leyenda haciendo click sobre éstas.
@@ -82,7 +82,7 @@ razones_conflicto
 <br>
 <center><small>
 
-34 sectores movilizados
+34 sectores movilizados.
 
 Las áreas muestran la proporción (%) de los sectores movilizados respecto al total.
 
@@ -103,7 +103,7 @@ tree_map_1
 <br>
 <center><small>
 
-32 receptores de demandas
+32 receptores de demandas.
 
 Las áreas muestran la proporción (%) de los sectores demandados respecto al total. 
 
